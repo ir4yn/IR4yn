@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>RH لعبة</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div id="userOverlay">
+    <div class="username-card">
+      <h1>RH</h1>
+      <p></p>
+      <input type="text" id="usernameInput" placeholder="اسم المستخدم">
+      <button id="startGameBtn">ابدأ اللعبة</button>
+    </div>
+  </div>
+  
+
+  <div id="gameContainer">
+
+    <div id="controls">
+      <button id="showQuestion" class="btn btn-primary m-1">السؤال</button>
+      <button id="showAnswerButton" class="btn btn-primary m-1" style="display: none;">الاجابة</button>
+      <button id="blueAdvance" class="btn btn-info m-1">الأزرق</button>
+      <button id="redAdvance" class="btn btn-danger m-1">الأحمر</button>
+      <button id="resetGame" class="btn btn-success m-1" style="display: none;">إعادة تعيين القيم</button>
+    </div>
+    
+    <div id="questionDisplay" class="question-display"></div>
+    
+    <div id="board">
+      <div class="team-circle blue" id="blueCircle">أزرق</div>
+      <div class="team-circle red" id="redCircle">أحمر</div>
+      <div id="stagesContainer">
+        
+      </div>
+    </div>
+    
+<div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="decisionModalLabel">اختر</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>هل تريد التقديم أم الترجيع؟</p>
+      </div>
+      <div class="modal-footer">
+        <button id="chooseAdvance" class="decision-btn-advance" data-bs-dismiss="modal">تقديم</button>
+        <button id="choosePush" class="decision-btn-push" data-bs-dismiss="modal">ترجيع</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="script.js"></script>
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <img src="" id="modalImage" class="img-fluid w-100" alt="صورة كبيرة">
+        </div>
+      </div>
+</body>
+</html>

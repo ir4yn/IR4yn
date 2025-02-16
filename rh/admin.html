@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>إدارة الأسئلة والمراحل</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      font-family: 'Tajawal', sans-serif;
+      color: #534b4b;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ece9ee;
+      font-weight: bold;
+    }
+    .card {
+      background: #a5a3a3;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #19181a, #252627);
+      color: #fff;
+      font-weight: bold;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .form-control {
+      border-radius: 8px;
+      border: 2px solid #423f3f;
+      transition: 0.3s;
+    }
+    .form-control:focus {
+      border-color: #7c7980;
+      box-shadow: 0 0 8px rgba(59, 57, 62, 0.2);
+    }
+    .btn {
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      border: none;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+    }
+    .btn-secondary {
+      background: #ccc;
+      border: none;
+    }
+    .btn-secondary:hover {
+      background: #bbb;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      color: #fff;
+    }
+    th {
+      background-color: #444;
+    }
+    tr:nth-child(even) {
+      background-color: #555;
+    }
+    .question-image {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    #loginOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="loginOverlay">
+    <div class="card" style="width: 300px;">
+      <div class="card-header">حساب الادمن</div>
+      <div class="card-body">
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="loginUsername" class="form-label">اسم المستخدم</label>
+            <input type="text" class="form-control" id="loginUsername" placeholder="أدخل اسم المستخدم" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">دخول</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="container mt-4" id="adminPage" style="display: none;">
+    <h2 class="mb-4">إدارة الأسئلة والمراحل</h2>
+
+    <div class="card">
+      <div class="card-header">إدارة المراحل</div>
+      <div class="card-body">
+        <form id="stageForm">
+          <div class="mb-3">
+            <label for="stageNumberConfig" class="form-label">رقم المرحلة (1-10)</label>
+            <input type="number" class="form-control" id="stageNumberConfig" min="1" max="10" required>
+          </div>
+          <div class="mb-3">
+            <label for="stageCategory" class="form-label">اسم الفئة</label>
+            <input type="text" class="form-control" id="stageCategory" placeholder="أدخل اسم الفئة" required>
+          </div>
+          <div class="mb-3">
+            <label for="stageIcon" class="form-label">صورة الأيقونة</label>
+            <input type="file" class="form-control" id="stageIcon" accept="image/*">
+          </div>
+          <button type="submit" class="btn btn-primary" id="saveStageBtn">حفظ المرحلة</button>
+        </form>
+      </div>
+    </div>
+
+    
+    <div class="card">
+      <div class="card-header">إضافة/تعديل سؤال</div>
+      <div class="card-body">
+        <form id="questionForm">
+          <input type="hidden" id="questionId" value="">
+          <div class="mb-3">
+            <label for="questionUser" class="form-label">اسم المستخدم</label>
+            <input type="text" class="form-control" id="questionUser" placeholder="اسم المستخدم" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="stageNumber" class="form-label">رقم المرحلة (1-10)</label>
+            <input type="number" class="form-control" id="stageNumber" min="1" max="10" required>
+          </div>
+          <div class="mb-3">
+            <label for="questionText" class="form-label">السؤال</label>
+            <textarea class="form-control" id="questionText" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="questionAnswer" class="form-label">الاجابة</label>
+            <textarea class="form-control" id="questionAnswer" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="questionImage" class="form-label">صورة السؤال (اختياري)</label>
+            <input type="file" class="form-control" id="questionImage" accept="image/*">
+          </div>
+          <button type="submit" class="btn btn-primary" id="saveQuestionBtn">حفظ السؤال</button>
+          <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display: none;">إلغاء التعديل</button>
+        </form>
+      </div>
+    </div>
+
+    
+    <div class="card">
+      <div class="card-header">عرض الأسئلة</div>
+      <div class="card-body">
+        <div id="questionsList"></div>
+      </div>
+    </div>
+
+    
+    <button id="logoutBtn" class="btn btn-secondary"> العودة</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6I51qJmqVZQT1oGIyi0KXQIQmE8SNreI",
+      authDomain: "rh10-9a901.firebaseapp.com",
+      databaseURL: "https://rh10-9a901-default-rtdb.firebaseio.com",
+      projectId: "rh10-9a901",
+      storageBucket: "rh10-9a901.appspot.com",
+      messagingSenderId: "214151676996",
+      appId: "1:214151676996:web:cea6e89de48274d857e811"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let currentUser = null;
+
+    function readImageAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          resolve(event.target.result);
+        };
+        reader.onerror = function(error) {
+          reject(error);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    $('#loginForm').submit(function(e) {
+      e.preventDefault();
+      const username = $('#loginUsername').val().trim();
+      if (!username) {
+        alert("يرجى إدخال اسم المستخدم.");
+        return;
+      }
+      
+      currentUser = username;
+   
+      $('#questionUser').val(currentUser);
+
+      $('#loginOverlay').hide();
+      $('#adminPage').show();
+      fetchQuestions();
+    });
+
+  
+    $('#logoutBtn').click(function() {
+      currentUser = null;
+      $('#loginOverlay').show();
+      $('#adminPage').hide();
+      $('#loginForm')[0].reset();
+    });
+
+    $('#stageForm').submit(function(e) {
+      e.preventDefault();
+      const stageNumber = $('#stageNumberConfig').val();
+      const category = $('#stageCategory').val();
+      const file = $('#stageIcon')[0].files[0];
+
+      if (!currentUser) {
+        alert("يرجى تسجيل الدخول أولاً.");
+        return;
+      }
+
+      function saveStage(iconData = null) {
+        const stageData = {
+          category: category,
+          icon: iconData || ""
+        };
+      
+        database.ref('stages/' + currentUser + '/' + stageNumber)
+          .set(stageData)
+          .then(() => {
+            alert('تم حفظ إعدادات المرحلة.');
+            $('#stageForm')[0].reset();
+          });
+      }
+
+      if (file) {
+        readImageAsDataURL(file)
+          .then(dataURL => {
+            saveStage(dataURL);
+          })
+          .catch(err => {
+            alert('خطأ في قراءة الصورة: ' + err);
+          });
+      } else {
+        saveStage();
+      }
+    });
+
+   
+    function fetchQuestions() {
+      if (!currentUser) return;
+      database.ref('questions/' + currentUser).once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        let questionsArr = [];
+        for (let stage in data) {
+          for (let qid in data[stage]) {
+            let q = data[stage][qid];
+            q.id = qid;
+            q.stage = stage;
+            q.user = currentUser;
+            questionsArr.push(q);
+          }
+        }
+        questionsArr.sort((a, b) => a.stage - b.stage);
+        renderQuestions(questionsArr);
+      });
+    }
+
+   
+    function renderQuestions(questions) {
+      let html = '';
+      if (questions.length === 0) {
+        html = '<p>لا توجد أسئلة.</p>';
+      } else {
+        html += `
+          <table>
+            <thead>
+              <tr>
+                <th>رقم المرحلة</th>
+                <th>السؤال</th>
+                <th>الاجابة</th>
+                <th>الصورة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        questions.forEach(q => {
+          html += `
+            <tr data-id="${q.id}" data-stage="${q.stage}">
+              <td>${q.stage}</td>
+              <td>${q.text}</td>
+              <td>${q.answer}</td>
+              <td>${q.image ? `<img src="${q.image}" class="question-image" alt="صورة السؤال">` : ''}</td>
+              <td>
+                <button class="btn btn-sm btn-warning editQuestionBtn" data-id="${q.id}" data-stage="${q.stage}">تعديل</button>
+                <button class="btn btn-sm btn-danger deleteQuestionBtn" data-id="${q.id}" data-stage="${q.stage}">حذف</button>
+              </td>
+            </tr>
+          `;
+        });
+        html += `
+            </tbody>
+          </table>
+        `;
+      }
+      $('#questionsList').html(html);
+    }
+
+    
+    $('#questionForm').submit(function(e) {
+      e.preventDefault();
+      if (!currentUser) {
+        alert("يرجى تسجيل الدخول أولاً.");
+        return;
+      }
+     
+      const user = currentUser;
+      const stage = $('#stageNumber').val();
+      const text = $('#questionText').val();
+      const answer = $('#questionAnswer').val();
+      const questionId = $('#questionId').val();
+      const file = $('#questionImage')[0].files[0];
+
+      function saveQuestion(imageData = null) {
+        const questionData = {
+          text: text,
+          answer: answer,
+          image: imageData || null
+        };
+        if (questionId) {
+          database.ref('questions/' + user + '/' + stage + '/' + questionId)
+            .update(questionData)
+            .then(() => {
+              alert('تم تحديث السؤال.');
+              resetForm();
+              fetchQuestions();
+            });
+        } else {
+          database.ref('questions/' + user + '/' + stage)
+            .push(questionData)
+            .then(() => {
+              alert('تم إضافة السؤال.');
+              resetForm();
+              fetchQuestions();
+            });
+        }
+      }
+
+      if (file) {
+        readImageAsDataURL(file)
+          .then(dataURL => {
+            saveQuestion(dataURL);
+          })
+          .catch(err => {
+            alert('خطأ في قراءة الصورة: ' + err);
+          });
+      } else {
+        saveQuestion();
+      }
+    });
+
+    function resetForm() {
+      $('#questionForm')[0].reset();
+      $('#questionId').val('');
+      $('#cancelEditBtn').hide();
+      $('#questionUser').val(currentUser);
+    }
+
+    $(document).on('click', '.deleteQuestionBtn', function() {
+      const stage = $(this).data('stage');
+      const id = $(this).data('id');
+      if (confirm('هل أنت متأكد من حذف هذا السؤال؟')) {
+        database.ref('questions/' + currentUser + '/' + stage + '/' + id).remove().then(() => {
+          alert('تم حذف السؤال.');
+          fetchQuestions();
+        });
+      }
+    });
+
+    $(document).on('click', '.editQuestionBtn', function() {
+      const stage = $(this).data('stage');
+      const id = $(this).data('id');
+      database.ref('questions/' + currentUser + '/' + stage + '/' + id).once('value').then(snapshot => {
+        const q = snapshot.val();
+        $('#questionId').val(id);
+        
+        $('#stageNumber').val(stage);
+        $('#questionText').val(q.text);
+        $('#questionAnswer').val(q.answer);
+        if(q.image){
+          alert('يوجد صورة مرفقة مع هذا السؤال. في حال تحميل صورة جديدة سيتم استبدال الصورة القديمة.');
+        }
+        $('#cancelEditBtn').show();
+      });
+    });
+  </script>
+</body>
+</html>

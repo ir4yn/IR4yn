@@ -1,0 +1,341 @@
+html, body {
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  direction: rtl;
+  background-image: url('images/bl.jpg');
+  font-family: 'Tajawal', sans-serif;
+  
+}
+
+#userOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.username-card {
+  background: linear-gradient(145deg, #f8f9fa00 0%, #e9ecef00 100%);
+  padding: 25px 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform-style: preserve-3d;
+}
+
+.username-card h1 {
+  margin: 0 0 25px 0;
+  color: #ffffff;
+  font-size: 1.8em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.username-card input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin: 15px 0;
+  border: 2px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.username-card input[type="text"]:focus {
+  border-color: #7d28a7;
+  outline: none;
+}
+
+.username-card button {
+  padding: 12px 25px;
+  background: linear-gradient(145deg, #8e28a744 0%, #7021883a 100%);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.username-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.username-card button:active {
+  transform: translateY(0);
+}
+
+#gameContainer {
+  display: none;
+  padding: 20px;
+  background: rgba(20, 16, 19, 0.8);
+  
+}
+
+#stagesContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100vh;
+  padding-bottom: 200px;
+}
+
+.stage {
+  width: 80px;
+  height: 170px;
+  background: rgba(224, 247, 250, 0.777);
+  border: 1px solid rgba(173, 96, 160, 0.929);
+  margin: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+}
+
+.stage:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  background: rgba(224, 247, 250, 0.25);
+}
+
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  margin: 110px auto 0 auto;
+  background-size: cover;
+  background-position: center;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.team-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border: 2px solid rgba(255,255,255,0.2);
+  font-size: 1.2em;
+}
+
+.team-circle.blue { background: linear-gradient(145deg, #0066cc 0%, #004799 100%); }
+.team-circle.red { background: linear-gradient(145deg, #cc0000 0%, #990000 100%); }
+
+#controls {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.question-display {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 1.9em;
+  color: #fff;
+  z-index: 1000;
+ 
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
+  padding: 15px 30px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+
+
+.question-img-container {
+  border: 2px solid #ccc;
+  padding: 3px;
+  border-radius: 5px;
+  display: block;
+  width: 150px; /* تقليل حجم المربع */
+  margin: 15px auto; /* التوسيط */
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.question-img-container:hover {
+  transform: scale(1.02);
+}
+
+.fullscreen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw; /* تكبير الصورة */
+  height: auto;
+  max-height: 80vh;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+
+
+#decisionModal .modal-content {
+  background: transparent; 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#decisionModal .modal-header {
+  background-color: #343a40;
+  color: #fff;
+  border-bottom: none;
+  padding: 15px;
+}
+
+#decisionModal .modal-footer {
+  border-top: none;
+  justify-content: center;
+  padding: 15px;
+}
+
+
+#decisionModal .modal-body {
+  background: transparent;
+}
+
+.decision-btn-advance {
+  background-color: #218838;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 16px;
+  margin: 5px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.decision-btn-advance:hover {
+  background: #000000;
+  transform: scale(1.05);
+}
+
+.decision-btn-push {
+  background-color: #c0822b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-size: 16px;
+  margin: 5px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.decision-btn-push:hover {
+  background: #000000;
+  transform: scale(1.05);
+}
+
+
+
+
+.lifeline-button {
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.blue-lifeline {
+  background: linear-gradient(45deg, #5a8dee, #3a6fcc);
+}
+.red-lifeline {
+  background: linear-gradient(45deg, #ff4d6d, #e83a5c);
+}
+.lifeline-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.lifeline-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+
+.lifeline-input {
+  width: 300px;
+  padding: 8px;
+  color: #ffffff;
+  border: 1px solid #ced4da00;
+  border-radius: 4px;
+  font-size: 1.9em;
+  transition: border-color 0.3s ease;
+  background: #ffffff00;
+}
+.blue-input {
+  text-align: left;
+  direction: ltr; 
+}
+
+
+.lifeline-input:focus {
+  border-color: #ffffff;
+  outline: none;
+}
+
+.stage-category {
+  position: absolute;
+  top: -30px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  color: #fff; 
+  font-size: 15px;
+  font-weight: bold;
+  margin: 0; /
+}
+
+
+.stage-icon {
+  position: absolute;
+  bottom: -50px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;  
+  height: 50px; 
+  display: block;
+}

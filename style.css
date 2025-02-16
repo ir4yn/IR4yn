@@ -1,0 +1,238 @@
+:root {
+    --primary-gradient: linear-gradient(45deg, #6a11cb, #2575fc);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Tajawal', sans-serif;
+  }
+  
+  body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-size: cover;
+  }
+  
+  .hero-section {
+    width: 100%;
+    height: 100%;
+    background-image: url(/rh/images/bl.jpg);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+
+  .hero-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.762);
+    z-index: 1;
+  }
+  
+ 
+  .hero-content {
+    position: absolute;
+    top: 60px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  
+  #hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 1rem;
+  }
+  
+  #hero-buttons button {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 150px;
+  }
+  
+  #hero-buttons button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #2575fc, #6a11cb);
+  }
+
+  .slider-container {
+    position: absolute;
+    bottom: 150px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1000px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    z-index: 2;
+  }
+  
+  .slide {
+    position: relative;
+    min-width: 280px;
+    height: 200px;
+    margin: 0 15px;
+    border-radius: 15px;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    will-change: transform, opacity;
+  }
+  
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+  }
+  
+  .slide.active {
+    transform: scale(1.15);
+    opacity: 1;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    z-index: 3;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .slide.inactive {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+  
+  .slider-controls {
+    position: absolute;
+    bottom: 70px; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .slider-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    color: white;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .slider-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.877);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal-content {
+    background: #ffffff27;
+    padding: 20px 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #ffffff;
+  }
+  
+  .modal-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ffffff;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-content h1 {
+      font-size: 2.5rem;
+    }
+    .slide {
+      min-width: 220px;
+      height: 160px;
+    }
+    #hero-buttons button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+    }
+    .slider-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+    }
+  }
+  

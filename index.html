@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>العاب راين</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 id="hero-title">اللوبي</h1>
+      <div id="hero-buttons">
+        <button id="play-btn">العب الآن</button>
+        <button id="info-btn">تعليمات اللعبة</button>
+      </div>
+    </div>
+
+    <div class="slider-container" id="slider">
+      <div class="slide" style="background-image: url('/rh/images/khhrb.jpg')" data-index="0"
+           data-title="لعبة التخمين" data-url="/t5m/index.html">
+      </div>
+      <div class="slide" style="background-image: url('/rh/images/khrh.jpg')" data-index="1" data-title="لعبة RH"
+           data-url="/rh/index.html">
+      </div>
+      <div class="slide" style="background-image: url('/rh/images/kht5.jpg')" data-index="2"
+           data-title="لعبة الحظ" data-url="/hrb/index.html">
+      </div>
+    </div>
+
+    <div class="slider-controls">
+      <button class="slider-btn" id="prevBtn">❮</button>
+      <button class="slider-btn" id="nextBtn">❯</button>
+    </div>
+  </section>
+
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" id="modal-close">&times;</button>
+      <h2>تعليمات اللعبة</h2>
+      <p id="modal-text">هنا توضع تعليمات اللعبة مع شرح مفصل لكل خطوة، يمكنك تعديل هذا النص حسب احتياجك.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

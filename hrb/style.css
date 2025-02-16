@@ -1,0 +1,292 @@
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  background: url("/hrb/images/hrbb6.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  color: #000000;
+  position: relative;
+  backdrop-filter: blur(3px);
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.712);
+
+}
+
+#team1Box {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(231, 76, 60, 0.2); 
+  border: 2px solid rgba(231, 76, 60, 0.5);
+  border-right: none;
+  border-top: none;
+  border-radius: 10px;
+  width: 120px;
+  height: 600px;
+  padding: 20px;
+  text-align: center;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.2);
+}
+
+#team2Box {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(52, 152, 219, 0.2); 
+  border: 2px solid rgba(52, 152, 219, 0.5);
+  border-left: none;
+  border-top: none;
+  border-radius: 10px;
+  width: 120px;
+  height: 600px;
+  padding: 20px;
+  text-align: center;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+.team-name {
+  font-size: 1.5rem;
+  color: rgba(236, 240, 241, 0.8);
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.team-score {
+  font-size: 3rem;
+  color: rgba(236, 240, 241, 0.9);
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+#team1Box.active {
+  box-shadow: 0 0 20px 5px rgba(231, 76, 60, 0.8);
+  transform: translateY(-50%) scale(1.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#team2Box.active {
+  box-shadow: 0 0 20px 5px rgba(52, 152, 219, 0.8);
+  transform: translateY(-50%) scale(1.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(10, 70px);
+  grid-template-rows: repeat(9, 70px);
+  gap: 10px;
+  padding: 50px;
+  background-color: transparent;
+  margin: 0 auto;
+}
+
+.gold-card {
+  width: 70px;
+  height: 70px;
+  background-color: rgba(70, 66, 63, 0.59);
+  border-radius: 10px;
+  border: 1px solid #726b72;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3),
+              inset 0 0 6px rgba(113, 106, 121, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: #ecf0f1;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease,
+              border-color 0.3s ease,
+              transform 0.3s ease;
+}
+
+.gold-card.selected.team1 {
+  background-color: rgba(231, 76, 60, 0.3);
+  border-color: #e74c3c;
+  color: #ffffff;
+  box-shadow: 0 0 15px 5px rgba(231, 76, 60, 0.5);
+}
+
+.gold-card.selected.team2 {
+  background-color: rgba(52, 152, 219, 0.3);
+  border-color: #3498db;
+  color: #ffffff;
+  box-shadow: 0 0 15px 5px rgba(52, 152, 219, 0.5);
+}
+
+.gold-card.clicked {
+  transform: scale(1.1);
+}
+
+.gold-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+.progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  width: 0%;
+  height: 50%;
+  background-color: #ffffff63;
+  transition: width 0.3s linear;
+}
+
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(5, 60px);
+    grid-template-rows: repeat(auto-fit, 60px);
+    gap: 8px;
+    padding: 20px;
+  }
+
+  #team1Box,
+  #team2Box {
+    width: 90px;
+    height: 400px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: repeat(4, 50px);
+    grid-template-rows: repeat(auto-fit, 50px);
+    gap: 5px;
+    padding: 10px;
+  }
+
+  .gold-card {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  #team1Box,
+  #team2Box {
+    width: 70px;
+    height: 300px;
+    padding: 5px;
+  }
+
+  .team-name {
+    font-size: 1rem;
+  }
+
+  .team-score {
+    font-size: 2rem;
+  }
+}
+
+.fi {
+  font-size: 2em;
+  margin: 10px;
+}
+
+.gold-card img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
+
+
+#controlMenu {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 11000;
+}
+
+#controlButton {
+  background-color: #72676648;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 1.2rem;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+#controlButton:hover {
+  transform: scale(1.05);
+}
+
+#controlDropdown {
+  display: none;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #f8c39106, #f7d89404);
+  color: #f6f8f9;
+  cursor: pointer;
+  border: 1px solid #cccccc00;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+}
+
+#controlDropdown button {
+  background: linear-gradient(135deg, #f8c39106, #f7d89404);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: #f6f8f9;
+  cursor: pointer;
+  margin: 5px;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#controlDropdown button:hover {
+  transform: scale(1.05);
+}
+
+#scoreOptions {
+  display: none;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
