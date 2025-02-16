@@ -9,7 +9,7 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: 'Roboto', sans-serif;
-  background: url("/hrb/images/hrbb6.jpg");
+  background: url("./images/hrbb6.jpg");
   background-size: cover;
   background-attachment: fixed;
   color: #000000;

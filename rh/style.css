@@ -3,7 +3,7 @@ html, body {
   margin: 0;
   overflow: hidden;
   direction: rtl;
-  background-image: url('images/bl.jpg');
+  background-image: url('./images/bl.jpg');
   font-family: 'Tajawal', sans-serif;
   
 }
