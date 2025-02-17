@@ -1,3 +1,5 @@
+let lifelineCount = 4;
+
 const firebaseConfig = {
   apiKey: "AIzaSyA6I51qJmqVZQT1oGIyi0KXQIQmE8SNreI",
   authDomain: "rh10-9a901.firebaseapp.com",
@@ -14,8 +16,8 @@ let gameState = {
   bluePosition: 1,
   redPosition: 1,
   questions: {},
-  blueLifelines: [true, true, true, true],
-  redLifelines: [true, true, true, true]
+  blueLifelines: Array(lifelineCount).fill(true),
+  redLifelines: Array(lifelineCount).fill(true)
 };
 let activeStage = 1; 
 let currentUser = null;
@@ -34,15 +36,14 @@ function resetGame() {
   gameState.bluePosition = 1;
   gameState.redPosition = 1;
   activeStage = 1;
-  gameState.blueLifelines = [true, true, true, true];
-  gameState.redLifelines = [true, true, true, true];
+  gameState.blueLifelines = Array(lifelineCount).fill(true);
+  gameState.redLifelines = Array(lifelineCount).fill(true);
   updateUI();
   updateLifelinesUI();
   $('#blueAdvance, #redAdvance').prop('disabled', false);
   $('#resetGame').hide();
   $('#questionDisplay').empty();
 }
-
 
 function initStages() {
   const container = $('#stagesContainer');
@@ -54,6 +55,7 @@ function initStages() {
         <div class="stage-rect">
           <div class="icon-box" data-stage="${i}">
   
+          </div>
         </div>
         <div class="stage-icon">
           <img src="images/default-icon-${i}.png" alt="أيقونة المرحلة ${i}" class="img-fluid">
@@ -80,7 +82,6 @@ function loadStageConfigurations() {
     }
   });
 }
-
 
 function updateUI() {
   const stageElements = $('.stage');
@@ -111,15 +112,14 @@ function updateUI() {
 }
 
 function initLifelines() {
-  const lifelineTexts = [" 1", " 2", " 3", " 4"];
   let blueLifelinesContainer = $(`
     <div id="blueLifelines" class="lifelines-container" style="position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 10px;"></div>
   `);
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= lifelineCount; i++) {
     let lifelineItem = $(`
       <div class="lifeline-item">
         <input type="text" class="lifeline-input blue-input" placeholder="-" />
-        <button class="lifeline-button blue-lifeline" data-team="blue" data-index="${i}">${lifelineTexts[i - 1]}</button>
+        <button class="lifeline-button blue-lifeline" data-team="blue" data-index="${i}"> ${i}</button>
       </div>
     `);
     blueLifelinesContainer.append(lifelineItem);
@@ -127,10 +127,10 @@ function initLifelines() {
   let redLifelinesContainer = $(`
     <div id="redLifelines" class="lifelines-container" style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 10px;"></div>
   `);
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= lifelineCount; i++) {
     let lifelineItem = $(`
       <div class="lifeline-item">
-        <button class="lifeline-button red-lifeline" data-team="red" data-index="${i}">${lifelineTexts[i - 1]}</button>
+        <button class="lifeline-button red-lifeline" data-team="red" data-index="${i}"> ${i}</button>
         <input type="text" class="lifeline-input red-input" placeholder="-" />
       </div>
     `);
@@ -140,13 +140,12 @@ function initLifelines() {
 }
 
 function updateLifelinesUI() {
-  const lifelineTexts = [" 1", " 2", " 3", " 4"];
   $('#blueLifelines .lifeline-button').each(function() {
     let index = $(this).data('index');
     if (!gameState.blueLifelines[index - 1]) {
       $(this).text("X").addClass('used');
     } else {
-      $(this).text(lifelineTexts[index - 1]).removeClass('used');
+      $(this).text(" " + index).removeClass('used');
     }
   });
   $('#redLifelines .lifeline-button').each(function() {
@@ -154,7 +153,7 @@ function updateLifelinesUI() {
     if (!gameState.redLifelines[index - 1]) {
       $(this).text("X").addClass('used');
     } else {
-      $(this).text(lifelineTexts[index - 1]).removeClass('used');
+      $(this).text(" " + index).removeClass('used');
     }
   });
 }
@@ -275,6 +274,34 @@ $('#resetGame').click(() => {
   resetGame();
 });
 
+function addLifelineSetter() {
+  const lifelineSetterHTML = `
+    <div id="lifelineSetter" class="lifeline-setter">
+      <input type="number" id="lifelineInput" value="${lifelineCount}" min="1" class="lifeline-input" placeholder="المساعدات">
+      <button id="setLifelineCount" class="lifeline-btn">تأكيد</button>
+    </div>
+  `;
+  $('#gameContainer').prepend(lifelineSetterHTML);
+}
+
+
+// عند الضغط على زر تغيير عدد المساعدات يتم قراءة القيمة وتحديث الواجهة
+$(document).on('click', '#setLifelineCount', function() {
+  let newCount = parseInt($('#lifelineInput').val());
+  if (isNaN(newCount) || newCount < 1) {
+    alert("يرجى إدخال رقم صحيح للمساعدات.");
+    return;
+  }
+  lifelineCount = newCount;
+  // تحديث مصفوفات المساعدات في حالة اللعبة
+  gameState.blueLifelines = Array(lifelineCount).fill(true);
+  gameState.redLifelines = Array(lifelineCount).fill(true);
+  // إزالة واجهة المساعدات القديمة وإعادة إنشائها
+  $('#blueLifelines, #redLifelines').remove();
+  initLifelines();
+  updateLifelinesUI();
+});
+
 $('#startGameBtn').click(function() {
   currentUser = $('#usernameInput').val().trim();
   if (!currentUser) {
@@ -290,6 +317,7 @@ $('#startGameBtn').click(function() {
         loadStageConfigurations();
         updateUI();
         initLifelines();
+        addLifelineSetter(); // إضافة واجهة تغيير عدد المساعدات عند بدء اللعبة
         updateLifelinesUI();
         database.ref('questions/' + currentUser).on('value', (snapshot) => {
           gameState.questions = snapshot.val() || {};
