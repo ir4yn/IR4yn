@@ -333,11 +333,17 @@ html, body {
 .stage-icon {
   position: absolute;
   bottom: -50px; 
-  left: 31%;
+  left: 50%;
   transform: translateX(-50%);
   width: 115px;  
   height: 35px; 
   display: block;
+}
+
+.stage-icon img {
+  width: 160%;
+  height: 160%;
+  object-fit: contain; 
 }
 
 

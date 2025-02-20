@@ -235,6 +235,7 @@
         alert("يرجى إدخال اسم المستخدم.");
         return;
       }
+     
       
       currentUser = username;
    
@@ -317,8 +318,8 @@
       if (questions.length === 0) {
         html = '<p>لا توجد أسئلة.</p>';
       } else {
-        html += `
-          <table>
+        html += 
+          `<table>
             <thead>
               <tr>
                 <th>رقم المرحلة</th>
@@ -328,11 +329,10 @@
                 <th>الإجراءات</th>
               </tr>
             </thead>
-            <tbody>
-        `;
+            <tbody>`;
         questions.forEach(q => {
-          html += `
-            <tr data-id="${q.id}" data-stage="${q.stage}">
+          html += 
+            `<tr data-id="${q.id}" data-stage="${q.stage}">
               <td>${q.stage}</td>
               <td>${q.text}</td>
               <td>${q.answer}</td>
@@ -341,13 +341,11 @@
                 <button class="btn btn-sm btn-warning editQuestionBtn" data-id="${q.id}" data-stage="${q.stage}">تعديل</button>
                 <button class="btn btn-sm btn-danger deleteQuestionBtn" data-id="${q.id}" data-stage="${q.stage}">حذف</button>
               </td>
-            </tr>
-          `;
+            </tr>`;
         });
-        html += `
-            </tbody>
-          </table>
-        `;
+        html += 
+            `</tbody>
+          </table>`;
       }
       $('#questionsList').html(html);
     }
@@ -429,7 +427,6 @@
       database.ref('questions/' + currentUser + '/' + stage + '/' + id).once('value').then(snapshot => {
         const q = snapshot.val();
         $('#questionId').val(id);
-        
         $('#stageNumber').val(stage);
         $('#questionText').val(q.text);
         $('#questionAnswer').val(q.answer);
