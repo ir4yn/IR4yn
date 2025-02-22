@@ -1,11 +1,17 @@
 html, body {
+  width: 100vw;
   height: 100vh;
-  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
   overflow: hidden;
   direction: rtl;
   background-image: url('./images/bl.jpg');
   font-family: 'Tajawal', sans-serif;
-  
+}
+
+#gameContainer, #stagesContainer {
+  width: 100vw;
+  height: 100vh;
 }
 
 #userOverlay {
@@ -27,15 +33,15 @@ html, body {
   padding: 25px 30px;
   border-radius: 12px;
   text-align: center;
-  width: 300px;
+  width: 80vw;
+  max-width: 300px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  transform-style: preserve-3d;
 }
 
 .username-card h1 {
-  margin: 0 0 25px 0;
+  margin: 0 0 25px;
   color: #ffffff;
-  font-size: 1.8em;
+  font-size: clamp(1.5em, 5vw, 1.8em);
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -45,7 +51,7 @@ html, body {
   margin: 15px 0;
   border: 2px solid #ced4da;
   border-radius: 6px;
-  font-size: 1em;
+  font-size: clamp(0.9em, 3vw, 1em);
   transition: border-color 0.3s ease;
 }
 
@@ -61,7 +67,7 @@ html, body {
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1em;
+  font-size: clamp(0.9em, 3vw, 1em);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
@@ -79,7 +85,6 @@ html, body {
   display: none;
   padding: 20px;
   background: rgba(20, 16, 19, 0.8);
-  
 }
 
 #stagesContainer {
@@ -87,19 +92,18 @@ html, body {
   justify-content: center;
   align-items: flex-end;
   height: 100vh;
-  padding-bottom: 200px;
+  padding-bottom: 20vh;
 }
 
 .stage {
-  width: 80px;
-  height: 170px;
+  width: clamp(60px, 10vw, 80px);
+  height: clamp(120px, 25vh, 170px);
   background: rgba(224, 247, 250, 0.777);
   border: 1px solid rgba(173, 96, 160, 0.929);
   margin: 0 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
   position: relative;
   z-index: 1;
   border-radius: 12px;
@@ -114,19 +118,18 @@ html, body {
   background: rgba(224, 247, 250, 0.25);
 }
 
-
 .icon-box {
-  width: 40px;
-  height: 40px;
-  margin: 110px auto 0 auto;
+  width: clamp(30px, 5vw, 40px);
+  height: clamp(30px, 5vw, 40px);
+  margin: auto 0 0;
   background-size: cover;
   background-position: center;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .team-circle {
-  width: 50px;
-  height: 50px;
+  width: clamp(40px, 7vw, 50px);
+  height: clamp(40px, 7vw, 50px);
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -137,11 +140,16 @@ html, body {
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   border: 2px solid rgba(255,255,255,0.2);
-  font-size: 1.2em;
+  font-size: clamp(1em, 2.5vw, 1.2em);
 }
 
-.team-circle.blue { background: linear-gradient(145deg, #0066cc 0%, #004799 100%); }
-.team-circle.red { background: linear-gradient(145deg, #cc0000 0%, #990000 100%); }
+.team-circle.blue {
+  background: linear-gradient(145deg, #0066cc 0%, #004799 100%);
+}
+
+.team-circle.red {
+  background: linear-gradient(145deg, #cc0000 0%, #990000 100%);
+}
 
 #controls {
   text-align: center;
@@ -154,32 +162,64 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 0.9em;
+  font-size: clamp(1.5em, 4vw, 1.9em);
   color: #fff;
   z-index: 1000;
- 
   border: 2px solid rgba(255,255,255,0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
   padding: 15px 30px;
   border-radius: 8px;
   backdrop-filter: blur(4px);
 }
 
+#questionDisplay h3 {
+  font-size: clamp(8px, 2vw, 10px);
+  margin-bottom: 10px;
+}
 
+.questions-remaining {
+  font-size: clamp(10px, 2vw, 12px);
+  color: #3b0138;
+  text-align: center;
+  margin-top: clamp(100px, 20vh, 150px);
+}
 
 .question-img-container {
   border: 2px solid #ccc;
   padding: 3px;
   border-radius: 5px;
-  display: block;
-  width: 150px; 
-  margin: 15px auto; 
+  display: flex;
+  width: clamp(80px, 20vw, 120px);
+  height: clamp(80px, 20vw, 120px);
+  margin: 15px auto;
   cursor: pointer;
   transition: transform 0.2s;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-img-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
 }
 
 .question-img-container:hover {
   transform: scale(1.02);
+}
+
+.answer-display {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  text-align: left;
+  font-size: clamp(0.7em, 2vw, 0.9em);
+  color: #fff;
+  z-index: 1000;
+  border: 2px solid rgba(255,255,255,0.1);
+  padding: 15px 30px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
 }
 
 .fullscreen {
@@ -187,7 +227,7 @@ html, body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80vw; 
+  width: 80vw;
   height: auto;
   max-height: 80vh;
   background: rgba(0, 0, 0, 0.8);
@@ -196,31 +236,36 @@ html, body {
   z-index: 1000;
 }
 
+#decisionModal .modal-dialog,
+#settingsModal .modal-dialog,
+#gameplayModal .modal-dialog {
+  max-width: clamp(250px, 80vw, 300px);
+}
 
-
-#decisionModal .modal-content {
-  background: transparent; 
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+#decisionModal .modal-content,
+#settingsModal .modal-content {
+  background: linear-gradient(145deg, #2c3e5030 0%, #1a252f35 100%);
+  color: #ffffff;
   border-radius: 12px;
-  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+#gameplayModal .modal-content {
+  background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 #decisionModal .modal-header {
-  background-color: #343a40;
-  color: #fff;
-  border-bottom: none;
-  padding: 15px;
-}
-
-#decisionModal .modal-footer {
-  border-top: none;
-  justify-content: center;
-  padding: 15px;
-}
-
-
-#decisionModal .modal-body {
   background: transparent;
+  color: #ffffff;
+  border-bottom: none;
+}
+
+.modal-body,
+.modal-footer,
+.modal-header {
+  padding: 10px;
 }
 
 .decision-btn-advance {
@@ -229,7 +274,7 @@ html, body {
   border: none;
   border-radius: 8px;
   padding: 12px 25px;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   margin: 5px;
   transition: background 0.3s ease, transform 0.3s ease;
 }
@@ -245,7 +290,7 @@ html, body {
   border: none;
   border-radius: 8px;
   padding: 12px 25px;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   margin: 5px;
   transition: background 0.3s ease, transform 0.3s ease;
 }
@@ -255,17 +300,13 @@ html, body {
   transform: scale(1.05);
 }
 
-
-
-
 .lifeline-button {
-  width: 40px;
-  height: 40px;
+  width: clamp(30px, 6vw, 40px);
+  height: clamp(30px, 6vw, 40px);
   margin: 5px;
-  font-size: 19px;
+  font-size: clamp(16px, 3vw, 19px);
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
   border: none;
   border-radius: 5px;
   color: #fff;
@@ -273,12 +314,15 @@ html, body {
   border: 1px solid rgba(255,255,255,0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .blue-lifeline {
   background: linear-gradient(45deg, #5a8dee, #3a6fcc);
 }
+
 .red-lifeline {
   background: linear-gradient(45deg, #ff4d6d, #e83a5c);
 }
+
 .lifeline-button:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0,0,0,0.3);
@@ -294,115 +338,72 @@ html, body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-
 .lifeline-input {
-  width: 300px;
+  width: clamp(200px, 60vw, 300px);
   padding: 8px;
   color: #ffffff;
   border: 1px solid #ced4da00;
   border-radius: 4px;
-  font-size: 1.4em;
-  transition: border-color 0.3s ease;
+  font-size: clamp(1.2em, 3vw, 1.4em);
   background: #ffffff00;
-}
-.blue-input {
-  text-align: left;
-  direction: ltr; 
+  transition: border-color 0.3s ease;
 }
 
+.blue-input {
+  text-align: left;
+  direction: ltr;
+}
 
 .lifeline-input:focus {
   border-color: #ffffff;
   outline: none;
 }
 
+.lifeline-button.used,
+.lifeline-input.used {
+  text-decoration: line-through;
+  text-decoration-color: rgb(160, 1, 1);
+  text-decoration-thickness: 2px;
+}
+
 .stage-category {
   position: absolute;
-  top: -55px; 
+  top: -55px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   text-align: center;
-  color: #fff; 
-  font-size: 15px;
+  color: #fff;
+  font-size: clamp(12px, 3vw, 15px);
   font-weight: bold;
-  margin: 0; /
 }
-
 
 .stage-icon {
   position: absolute;
-  bottom: -50px; 
+  bottom: -50px;
   left: 50%;
   transform: translateX(-50%);
-  width: 115px;  
-  height: 35px; 
-  display: block;
+  width: clamp(80px, 15vw, 115px);
+  height: clamp(25px, 5vw, 35px);
 }
 
 .stage-icon img {
   width: 160%;
   height: 160%;
-  object-fit: contain; 
+  object-fit: contain;
 }
-
-
-#lifelineSetter.lifeline-setter {
-  position: absolute;
-  top: 37px;
-  left: 65%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0);
-  padding: 10px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-}
-
-
-#lifelineSetter .lifeline-input {
-  width: 50px; 
-  padding: 4px 6px;
-  border: 1px solid #000;
-  border-radius: 4px;
-  margin-right: 1px;
-  font-size: 10px;
-  text-align: center; 
-  color: #ffffff; 
-}
-
-
-#lifelineSetter .lifeline-btn {
-  padding: 5px 12px;
-  background-color: #3c3e3f69;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#lifelineSetter .lifeline-btn:hover {
-  background-color: #00b357;
-}
-
 
 #controls button {
-  border-radius: 12px; 
-  transition: transform 0.2s, box-shadow 0.2s; 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-weight: bold;
 }
 
-
 #controls button:hover {
-  transform: translateY(-3px); 
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); 
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
-
 
 #controls .btn-primary {
   background: linear-gradient(45deg, #4750523b, #464c45);
@@ -423,4 +424,25 @@ html, body {
 #controls .btn-success {
   background: linear-gradient(45deg, #28a745, #85e085);
   border: none;
+}
+
+/* Media Query للشاشات الصغيرة */
+@media (max-width: 768px) {
+  #stagesContainer {
+    padding-bottom: 15vh;
+  }
+  .stage {
+    margin: 0 3px;
+  }
+  #controls {
+    margin-top: 10px;
+  }
+  .question-display {
+    padding: 10px 20px;
+  }
+  .answer-display {
+    padding: 10px 20px;
+    bottom: 10px;
+    left: 10px;
+  }
 }
