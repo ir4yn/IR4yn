@@ -204,6 +204,10 @@ html, body {
   object-fit: cover;
 }
 
+#imageModal .modal-dialog {
+  margin-top: 30vh; 
+}
+
 .question-img-container:hover {
   transform: scale(1.02);
 }
