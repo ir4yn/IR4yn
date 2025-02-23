@@ -1,5 +1,5 @@
 :root {
-  --primary-gradient: linear-gradient(45deg, #6a11cb, #2575fc);
+  --primary-gradient: linear-gradient(45deg, #9c7008, #fca625);
 }
 
 * {
@@ -23,7 +23,7 @@ body {
 .hero-section {
   width: 100%;
   height: 100%;
-  background-image: url('./images/wwwww.jpg');
+  background-image: url('./images/kj1.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed; 
@@ -31,6 +31,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* تعديل الشفافية هنا */
+  z-index: -1;
 }
 
 .hero-overlay {
@@ -82,7 +93,7 @@ body {
 #hero-buttons button:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(45deg, #2575fc, #6a11cb);
+  background: linear-gradient(45deg, #fcbb25, #c57600);
 }
 
 .slider-container {
@@ -110,7 +121,7 @@ body {
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
   cursor: pointer;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(236, 168, 21, 0.1);
   will-change: transform, opacity;
 }
 
@@ -129,7 +140,7 @@ body {
   opacity: 1;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   z-index: 3;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(246, 148, 11, 0.3);
 }
 
 .slide.inactive {
@@ -148,7 +159,7 @@ body {
 }
 
 .slider-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(252, 213, 163, 0.2);
   border: none;
   width: 50px;
   height: 50px;
@@ -164,7 +175,7 @@ body {
 }
 
 .slider-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(241, 192, 87, 0.632);
   transform: scale(1.1);
 }
 

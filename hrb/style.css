@@ -13,7 +13,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #1A202C;
+  background-image: url('./images/kj.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,6 +24,17 @@
   z-index: 12000;
   color: #F7FAFC;
   backdrop-filter: blur(3px);
+}
+
+#lobby::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: -22;
 }
 
 #lobby h1 {
@@ -57,8 +71,8 @@
   height: 80px;
   resize: none;
   text-align: center;
-  background-color: #EDF2F7;
-  color: #2D3748;
+  background-color: #a09b90;
+  color: #2f343d;
 }
 
 #startGameBtn {
@@ -68,13 +82,13 @@
   cursor: pointer;
   border-radius: 5px;
   border: none;
-  background: #48BB78;
+  background: #000000;
   color: #F7FAFC;
   transition: background 0.3s ease;
 }
 
 #startGameBtn:hover {
-  background: #38A169;
+  background: #987e4e;
 }
 
 #lobbySettingsBtn {
@@ -83,18 +97,18 @@
   cursor: pointer;
   border-radius: 5px;
   border: none;
-  background: #A68A64;
+  background: #000000;
   color: #F7FAFC;
   transition: background 0.3s ease;
 }
 
 #lobbySettingsBtn:hover {
-  background: #8B6F47;
+  background: #987e4e;
 }
 
 #lobbySettingsDropdown {
   margin-top: 10px;
-  background: rgba(74, 85, 104, 0.8);
+  background: rgba(74, 85, 104, 0);
   padding: 10px;
   border-radius: 5px;
   display: flex;
@@ -142,6 +156,10 @@
 
 
 body {
+  background-image: url('./images/kj.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -149,11 +167,10 @@ body {
   height: 100vh;
   margin: 0;
   overflow: hidden;
-  background: #1A202C;
   color: #F7FAFC;
   position: relative;
-  backdrop-filter: blur(3px);
 }
+
 
 body::before {
   content: "";
@@ -162,7 +179,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(45, 55, 72, 0.7);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 #team1Box, #team2Box {
@@ -245,7 +262,7 @@ body::before {
 .gold-card {
   width: 70px;
   height: 70px;
-  background-color: #69685d71;
+  background-color: #3230306e;
   border-radius: 10px;
   border: 1px solid #f39410;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.2), inset 0 0 6px rgba(139, 111, 71, 0.3);
@@ -388,7 +405,7 @@ body::before {
   margin: 3px;
   padding: 10px 20px;
   font-size: 1em;
-  background: linear-gradient(45deg, #38A169, #2F855A);
+  background: linear-gradient(45deg, #a17238, #857c2f);
   color: #F7FAFC;
   border: none;
   border-radius: 10px;
@@ -402,7 +419,7 @@ body::before {
 
 .boost-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(56, 161, 105, 0.7);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
 }
 
 
