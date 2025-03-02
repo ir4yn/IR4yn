@@ -353,26 +353,19 @@ document.addEventListener("DOMContentLoaded", () => {
       ];
       let totalCards = 90;
       let cardList = [];
-      const boostCount = 20;
-      for (let i = 0; i < 5; i++) {
+
+      // تعديل: استخدام 5 بطاقات boost فقط بقيمة 35
+      const boostCount = 5;
+      for (let i = 0; i < boostCount; i++) {
         cardList.push({ value: 35, type: "boost" });
       }
-      for (let i = 0; i < boostCount - 5; i++) {
-        const boostValue = Math.floor(Math.random() * (17 - 10 + 1)) + 10;
-        cardList.push({ value: boostValue, type: "boost" });
-      }
 
+      // باقي البطاقات ستكون بطاقات normal بنسبة 50% موجب و50% سالب
       const normalCount = totalCards - boostCount;
-      for (let i = 0; i < 5; i++) {
-        cardList.push({ value: -35, type: "normal" });
-      }
-      for (let i = 0; i < normalCount - 5; i++) {
-        const normalValue = Math.floor(Math.random() * 21);
-        let value = normalValue;
-        if (normalValue !== 0) {
-          const sign = Math.random() < 0.7 ? -1 : 1;
-          value = normalValue * sign;
-        }
+      for (let i = 0; i < normalCount; i++) {
+        const num = Math.floor(Math.random() * 20) + 1; // قيمة بين 1 و20
+        const sign = Math.random() < 0.5 ? -1 : 1;
+        const value = num * sign;
         cardList.push({ value: value, type: "normal" });
       }
 
@@ -582,7 +575,6 @@ document.addEventListener("DOMContentLoaded", () => {
           "2. مربع جديد: اللاعب يختار مربعًا آخر، وإذا كان رقمه موجبًا يُضاف إلى الرقم الأول، أما إذا كان سالبًا فيتم استبداله به.\n\n" +
           "3. نرد: اللاعب يتحدى البوت برمية نرد، إذا فاز، يتدبل الرقم ويُضاف للنقاط، وإذا خسر، يُخصم نفس الرقم."
         );
-        
       });
 
       modal.appendChild(contentContainer);
