@@ -1,4 +1,4 @@
-// إزالة "index.html" من عنوان URL إذا كان موجودًا
+
 if (window.location.pathname.endsWith('index.html')) {
   window.history.replaceState({}, '', window.location.pathname.replace('index.html', ''));
 }
@@ -24,7 +24,7 @@ function updateHeroContent() {
 
   document.getElementById('info-btn').onclick = () => {
     const gameInfo = {
-      0: "",
+      0: "--",
       1: "فريقان (الأزرق والأحمر) يتنافسان للوصول إلى المستوى 10 والفوز. اللعبة فيها 10 مراحل، وكل مرحلة لها فئة معينة وعدد محدد من الأسئلة. الأسئلة تُطرح فقط من المرحلة اللي واقف عندها الفريق، إذا جاوب الفريق صح يتقدم خطوة، ولو جاوب مرتين ورا بعض يقدر يختار بين التقدم خطوة أو إرجاع الخصم خطوة للخلف. كل فريق عنده عدد معين من المساعدات يحددها الشخص قبل بدء اللعبة.",
       2: "--"
     };

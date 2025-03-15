@@ -354,16 +354,14 @@ document.addEventListener("DOMContentLoaded", () => {
       let totalCards = 90;
       let cardList = [];
 
-      // تعديل: استخدام 5 بطاقات boost فقط بقيمة 35
       const boostCount = 5;
       for (let i = 0; i < boostCount; i++) {
         cardList.push({ value: 35, type: "boost" });
       }
 
-      // باقي البطاقات ستكون بطاقات normal بنسبة 50% موجب و50% سالب
       const normalCount = totalCards - boostCount;
       for (let i = 0; i < normalCount; i++) {
-        const num = Math.floor(Math.random() * 20) + 1; // قيمة بين 1 و20
+        const num = Math.floor(Math.random() * 20) + 1;
         const sign = Math.random() < 0.5 ? -1 : 1;
         const value = num * sign;
         cardList.push({ value: value, type: "normal" });
@@ -532,53 +530,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const contentContainer = document.createElement("div");
       contentContainer.className = "boost-content";
-      contentContainer.style.padding = "30px";
+      contentContainer.style.display = "flex";
+      contentContainer.style.gap = "20px";
+      contentContainer.style.justifyContent = "center";
+      contentContainer.style.flexWrap = "wrap";
+      contentContainer.style.padding = "20px";
+      contentContainer.style.background = "rgba(255,255,255,0.1)";
       contentContainer.style.borderRadius = "15px";
-      contentContainer.style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
-      contentContainer.style.textAlign = "center";
-      contentContainer.style.color = "#fff";
-      contentContainer.style.fontFamily = "'Arial', sans-serif";
 
-      const title = document.createElement("p");
-      title.textContent = "اختار";
-      title.style.fontSize = "2em";
-      title.style.marginBottom = "25px";
-      title.style.textShadow = "0 0 5px rgba(255, 255, 255, 0.5)";
-      contentContainer.appendChild(title);
+      function createOptionCard(text) {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "boost-card-option";
+        cardDiv.textContent = text;
+       
+        cardDiv.style.background = "#0A2742"; 
+        cardDiv.style.color = "#ffffff";         
+        cardDiv.style.padding = "20px";
+        cardDiv.style.borderRadius = "10px";
+        cardDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+        cardDiv.style.cursor = "pointer";
+        cardDiv.style.minWidth = "120px";
+        cardDiv.style.textAlign = "center";
+        cardDiv.style.fontSize = "1.2em";
+        return cardDiv;
+      }
+      
 
-      const option1 = document.createElement("button");
-      option1.textContent = "أخذ الرقم";
-      option1.className = "boost-btn";
-
-      const option2 = document.createElement("button");
-      option2.textContent = "مربع جديد";
-      option2.className = "boost-btn";
-
-      const option3 = document.createElement("button");
-      option3.textContent = "نرد";
-      option3.className = "boost-btn";
+      const option1 = createOptionCard("أخذ الرقم");
+      const option2 = createOptionCard("مربع جديد");
+      const option3 = createOptionCard("نرد");
 
       contentContainer.appendChild(option1);
       contentContainer.appendChild(option2);
       contentContainer.appendChild(option3);
 
-      // زر تعليمات الازرار
       const instructionBtn = document.createElement("button");
       instructionBtn.textContent = "الشرح";
       instructionBtn.className = "boost-btn instructions-btn";
       instructionBtn.style.marginTop = "15px";
+      instructionBtn.style.padding = "10px 20px";
+      instructionBtn.style.cursor = "pointer";
       contentContainer.appendChild(instructionBtn);
-
-      instructionBtn.addEventListener("click", () => {
-        alert(
-          "1. أخذ الرقم: اللاعب يضيف الرقم الموجود في المربع مباشرة إلى نقاط فريقه.\n\n" +
-          "2. مربع جديد: اللاعب يختار مربعًا آخر، وإذا كان رقمه موجبًا يُضاف إلى الرقم الأول، أما إذا كان سالبًا فيتم استبداله به.\n\n" +
-          "3. نرد: اللاعب يتحدى البوت برمية نرد، إذا فاز، يتدبل الرقم ويُضاف للنقاط، وإذا خسر، يُخصم نفس الرقم."
-        );
-      });
 
       modal.appendChild(contentContainer);
       document.body.appendChild(modal);
+
+      instructionBtn.addEventListener("click", () => {
+        alert(
+          "1. أخذ الرقم: يضاف الرقم الموجود في الكرت مباشرة إلى نقاط الفريق.\n\n" +
+          "2. مربع جديد: يختار اللاعب كرتاً آخر، وإذا كان رقمه موجباً يُضاف إلى الرقم الأول، وإذا كان سالباً يتم استبداله به.\n\n" +
+          "3. نرد: اللاعب يتحدى البوت برمية نرد، إذا فاز يتدبل الرقم ويُضاف للنقاط، وإذا خسر يُخصم الرقم."
+        );
+      });
 
       option1.addEventListener("click", () => {
         if (currentTeam === 1) {
@@ -629,7 +632,7 @@ document.addEventListener("DOMContentLoaded", () => {
         secondCardPrompt.style.color = "#fff";
         secondCardPrompt.style.fontSize = "1.5em";
         secondCardPrompt.style.textAlign = "center";
-        secondCardPrompt.textContent = "اختر مربع جديد ";
+        secondCardPrompt.textContent = "اختر مربع جديد";
         document.body.appendChild(secondCardPrompt);
         setTimeout(() => {
           secondCardPrompt.style.opacity = "0";
@@ -657,7 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.team2Stats[team2Index].score += boostValue * 2;
           }
           const winText = document.createElement("p");
-          winText.textContent = "فزت! تم تدبيل نقاطك";
+          winText.textContent = "فزت! تم تدبيل النقاط";
           winText.style.color = "#28a745";
           contentContainer.appendChild(winText);
         } else {
@@ -669,7 +672,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.team2Stats[team2Index].score -= boostValue;
           }
           const loseText = document.createElement("p");
-          loseText.textContent = "القممممم! تم خصم النقاط";
+          loseText.textContent = "خسرت! تم خصم النقاط";
           loseText.style.color = "#e74c3c";
           contentContainer.appendChild(loseText);
         }

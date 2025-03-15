@@ -16,30 +16,27 @@ body {
     overflow-x: hidden;
 }
 
-#lobby-container {
+/* صفحة الإعدادات */
+#settings-container {
     background: rgba(44, 62, 80, 0.95);
     max-width: 900px; 
     margin: 10px auto; 
-    padding: 10px; 
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    max-height: 4000px; 
-    
-}
-
-#game-container {
-    background: rgba(44, 62, 80, 0.95);
-    max-width: 900px;
-    margin: 20px auto;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-h2 {
-    margin-bottom: 10px;
-    color: #ffffff;
-    font-size: 2.5rem;
+
+#username {
+    width: 200px;
+    display: block;
+    margin: 0 auto;
+    padding: 10px;
+    border: 1px solid #5DADE2;
+    border-radius: 8px;
+    background: #D3D3D3;
+    color: #333;
+    transition: border 0.3s ease;
 }
 
 .form-group {
@@ -54,11 +51,10 @@ h2 {
     color: #F0F0F0;
 }
 
-
-
-.form-group input[type="text"],
-.form-group input[type="number"] {
-    width: 100%;
+#timeLimitGroup input[type="number"] {
+    width: 200px;
+    display: block;
+    margin: 0 auto;
     padding: 10px;
     border: 1px solid #5DADE2;
     border-radius: 8px;
@@ -67,8 +63,7 @@ h2 {
     transition: border 0.3s ease;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="number"]:focus {
+#timeLimitGroup input[type="number"]:focus {
     border-color: #AED6F1;
     outline: none;
 }
@@ -87,51 +82,6 @@ button {
 button:hover {
     background: #1F618D;
     transform: scale(1.05);
-}
-
-.category-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.category-box {
-    width: 100px; 
-    height: 140px;
-    border: 2px solid #5DADE2;
-    border-radius: 15px;
-    margin: 8px;
-    cursor: pointer;
-    transition: border-color 0.3s, background 0.3s, transform 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #34495E;
-}
-
-.category-box:hover {
-    border-color: #AED6F1;
-    transform: scale(1.05);
-}
-
-.category-box.selected {
-    border-color: #AED6F1;
-    background: #4A6A8A;
-}
-
-.category-box img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    margin-bottom: 8px;
-}
-
-.category-box span {
-    font-weight: bold;
-    color: #F0F0F0;
-    font-size: 1rem;
 }
 
 .mode-container {
@@ -182,7 +132,56 @@ button:hover {
     transform: scale(1.05);
 }
 
-/* تصميم صفحة اللعبة */
+/* صفحات اختيار الفئة وصفحة اللعبة */
+#categories-container, 
+#game-container {
+    background: rgba(44, 62, 80, 0.95);
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.category-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.category-box {
+    width: 100px; 
+    height: 140px;
+    border: 2px solid #5DADE2;
+    border-radius: 15px;
+    margin: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #34495E;
+}
+
+.category-box:hover {
+    border-color: #AED6F1;
+    transform: scale(1.05);
+}
+
+.category-box.selected {
+    border-color: #AED6F1;
+    background: #4A6A8A;
+}
+
+.category-box span {
+    font-weight: bold;
+    color: #F0F0F0;
+    font-size: 1rem;
+}
+
+/* صفحة اللعبة */
 .game-body {
     margin-bottom: 30px;
 }
@@ -218,7 +217,6 @@ button:hover {
     font-size: 1.5rem;
 }
 
-/* تصميم  الوقت */
 .time-box {
     font-size: 1.2rem;
     background: rgba(46, 139, 86, 0.3);
@@ -227,14 +225,12 @@ button:hover {
     color: #F0F0F0;
 }
 
-/* المحاولات المتبقية */
 .remaining-attempts {
     margin-top: 15px;
     font-size: 1.1rem;
     color: #ff2a00;
 }
 
-/* عرض الحروف الخاطئة */
 .wrong-letters-container {
     margin-top: 25px;
     display: flex;
@@ -244,14 +240,13 @@ button:hover {
 }
 
 .wrong-letter-box {
-    background: #CD5C5C;
-    color: #8B0000;
+    background: #fb5a5a;
+    color: #ffffff;
     padding: 10px 15px;
     border-radius: 8px;
     font-size: 1.3rem;
 }
 
-/* رسالة النتيجة */
 .message {
     font-weight: bold;
     margin-top: 20px;
@@ -336,17 +331,33 @@ button:hover {
     background: #1F618D;
 }
 
+#backToCategoriesBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 8px 12px;
+    background-color: #2E86C1;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#backToCategoriesBtn:hover {
+    background: #1F618D;
+    transform: scale(1.05);
+}
+
 @media (max-width: 600px) {
-    #lobby-container, #game-container {
+    #settings-container, #game-container {
         padding: 15px;
     }
     .category-box {
         width: 90px;
         height: 120px;
-    }
-    .category-box img {
-        width: 60px;
-        height: 60px;
     }
     .word-display {
         font-size: 2.8rem;

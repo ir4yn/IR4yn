@@ -15,6 +15,7 @@ fetch('words.json')
   .then(response => response.json())
   .then(data => {
     words = data;
+    updateCategoryCounts();
   })
   .catch(error => console.error('خطأ في تحميل الكلمات:', error));
 
@@ -24,7 +25,7 @@ function loadUsedWords(user) {
   if (stored) {
     return JSON.parse(stored);
   } else {
-    return { games: [], countries: [], names: [], foods: [] };
+    return { games: [], countries: [], names: [], foods: [], movies: [], cities: [], animals: [], sports: [], songs: [] };
   }
 }
 
@@ -52,15 +53,32 @@ function alreadyGuessed(letter) {
   return false;
 }
 
-/* تفعيل اختيار الفئات */
-document.querySelectorAll('.category-box').forEach(box => {
-  box.addEventListener('click', function() {
-    document.querySelectorAll('.category-box').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
-  });
+document.getElementById("settingsForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  username = document.getElementById("username").value.trim();
+  if (username === "") {
+    alert("يرجى إدخال اسم المستخدم.");
+    return;
+  }
+  let selectedModeElem = document.querySelector('.mode-box.selected');
+  let selectedMode = selectedModeElem.getAttribute('data-mode');
+  if(selectedMode === 'withoutTime'){
+    timeLimitLobby = 0;
+  } else {
+    timeLimitLobby = parseInt(document.getElementById("timeLimitLobby").value);
+  }
+  let selectedAttempt = document.querySelector('.attempts-box.selected').getAttribute('data-attempt');
+  attemptsLobby = parseInt(selectedAttempt);
+
+  document.getElementById("displayUsername").innerText = username;
+  document.getElementById("displayMode").innerText = (selectedMode === 'withoutTime') ? "بدون وقت" : "بالوقت";
+  document.getElementById("displayAttempts").innerText = attemptsLobby;
+
+  document.getElementById("settings-container").style.display = "none";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
 });
 
-/* تفعيل اختيار نوع اللعب */
 document.querySelectorAll('.mode-box').forEach(box => {
   box.addEventListener('click', function() {
     document.querySelectorAll('.mode-box').forEach(b => b.classList.remove('selected'));
@@ -74,7 +92,6 @@ document.querySelectorAll('.mode-box').forEach(box => {
   });
 });
 
-/* تفعيل اختيار عدد المحاولات */
 document.querySelectorAll('.attempts-box').forEach(box => {
   box.addEventListener('click', function() {
     document.querySelectorAll('.attempts-box').forEach(b => b.classList.remove('selected'));
@@ -82,37 +99,57 @@ document.querySelectorAll('.attempts-box').forEach(box => {
   });
 });
 
-document.getElementById("lobbyForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  username = document.getElementById("username").value.trim();
-  if (username === "") {
-    alert("يرجى إدخال اسم المستخدم.");
+document.querySelectorAll('.category-box').forEach(box => {
+  box.addEventListener('click', function() {
+    document.querySelectorAll('.category-box').forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+
+document.getElementById("startGameBtn").addEventListener("click", function() {
+  let selectedCategoryBox = document.querySelector('.category-box.selected');
+  if (!selectedCategoryBox) {
+    alert("اختر الفئة !!!!!!!!");
     return;
   }
-  let selectedBox = document.querySelector('.category-box.selected');
-  if (!selectedBox) {
-    alert("يرجى اختيار الفئة.");
-    return;
-  }
-  currentCategory = selectedBox.getAttribute("data-category");
-  document.getElementById("gameTitle").innerText = selectedBox.querySelector("span").innerText;
+  currentCategory = selectedCategoryBox.getAttribute("data-category");
   
-  // قراءة اختيار عدد المحاولات من المربع المحدد
-  let selectedAttempt = document.querySelector('.attempts-box.selected').getAttribute('data-attempt');
-  attemptsLobby = parseInt(selectedAttempt);
-  
-  // قراءة اختيار نوع اللعب
-  let selectedMode = document.querySelector('.mode-box.selected').getAttribute('data-mode');
-  if(selectedMode === 'withoutTime'){
-    timeLimitLobby = 0;
-  } else {
-    timeLimitLobby = parseInt(document.getElementById("timeLimitLobby").value);
+  if(currentCategory !== "custom"){
+    let remainingCount = parseInt(selectedCategoryBox.querySelector(".remaining-count").innerText);
+    if(remainingCount <= 0){
+      alert("قريبا");
+      return;
+    }
   }
   
-  document.getElementById("lobby-container").style.display = "none";
+  document.getElementById("gameTitle").innerText = selectedCategoryBox.querySelector("span").innerText;
+  document.getElementById("categories-container").style.display = "none";
   document.getElementById("game-container").style.display = "block";
   startGame();
 });
+
+document.getElementById("backToCategoriesBtn").addEventListener("click", function() {
+  clearInterval(timerInterval);
+  document.getElementById("game-container").style.display = "none";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
+});
+
+function updateCategoryCounts() {
+  if (!words || Object.keys(words).length === 0) return;
+  document.querySelectorAll('.category-box').forEach(box => {
+    let category = box.getAttribute("data-category");
+    if (category === "custom") return;
+    let total = words[category] ? words[category].length : 0;
+    let usedWords = loadUsedWords(username);
+    let usedCount = usedWords[category] ? usedWords[category].length : 0;
+    let remaining = total - usedCount;
+    let smallElem = box.querySelector(".remaining-count");
+    if (smallElem) {
+      smallElem.innerText = remaining;
+    }
+  });
+}
 
 document.getElementById("backBtn").addEventListener("click", function() {
   clearInterval(timerInterval);
@@ -122,7 +159,8 @@ document.getElementById("backBtn").addEventListener("click", function() {
   document.getElementById("retryBtn").style.display = "none";
   document.getElementById("showAnswerBtn").style.display = "none";
   document.getElementById("message").innerText = "";
-  document.getElementById("lobby-container").style.display = "block";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
 });
 
 document.getElementById("nextWordBtn").addEventListener("click", function() {
@@ -156,7 +194,7 @@ function startGame() {
     usedWords[currentCategory].push(secretWord);
     saveUsedWords(username, usedWords);
     let remainingQuestions = wordList.length - usedWords[currentCategory].length;
-    document.getElementById("remainingQuestions").innerText = "باقي " + remainingQuestions + "";
+    document.getElementById("remainingQuestions").innerText = "باقي " + remainingQuestions;
   }
   initializeGame();
 }
@@ -210,6 +248,10 @@ function showCustomWordModal() {
       alert("يجب إدخال كلمة صحيحة.");
       return;
     }
+    if (!/^[\u0621-\u064A]+$/.test(customWord)) {
+      alert(" أحرف عربية فقط.");
+      return;
+    }
     secretWord = customWord;
     modal.style.display = "none";
     document.getElementById("remainingQuestions").innerText = "";
@@ -218,8 +260,7 @@ function showCustomWordModal() {
 
   document.getElementById("customWordCancel").onclick = function() {
     modal.style.display = "none";
-    document.getElementById("lobby-container").style.display = "block";
-    document.getElementById("game-container").style.display = "none";
+    document.getElementById("categories-container").style.display = "block";
   };
 }
 
@@ -263,6 +304,10 @@ function guessLetter() {
   input.value = "";
   if (!letter) return;
   letter = letter.trim();
+  if (!/^[\u0621-\u064A]$/.test(letter)) {
+    document.getElementById("message").innerText = "";
+    return;
+  }
   if (alreadyGuessed(letter)) {
     document.getElementById("message").innerText = "لقد اخترت هذا الحرف من قبل.";
     return;
@@ -282,7 +327,7 @@ function guessLetter() {
   if (!displayedWord.includes("_")) {
     clearInterval(timerInterval);
     document.getElementById("wordDisplay").innerText = secretWord;
-    document.getElementById("message").innerText = "صح عليييك يافنااان";
+    document.getElementById("message").innerText = "صححح يامجنووووووووون";
     disableInput();
     document.getElementById("nextWordBtn").style.display = "block";
     document.getElementById("backBtn").style.display = "block";

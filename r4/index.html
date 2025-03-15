@@ -5,76 +5,104 @@
   <title>لعبة الكلمات</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+   
+  </style>
 </head>
 <body>
-
-  <div id="lobby-container">
-    <h2>لعبة الكلمات</h2>
-    <form id="lobbyForm">
+  <!-- صفحة إعدادات اللعبة -->
+  <div id="settings-container">
+    <h2>إعدادات اللعبة</h2>
+    <form id="settingsForm">
       <div class="form-group">
         <label for="username">اسم المستخدم:</label>
         <input type="text" id="username" required>
       </div>
       <div class="form-group">
-        <p>اختر الفئة:</p>
-        <div class="category-container">
-          <div class="category-box" data-category="games">
-            
-            <span>العاب</span>
-          </div>
-          <div class="category-box" data-category="countries">
-            
-            <span>دول</span>
-          </div>
-          <div class="category-box" data-category="names">
-            
-            <span>اسماء</span>
-          </div>
-          <div class="category-box" data-category="foods">
-           
-            <span>اكلات</span>
-          </div>
-          <div class="category-box" data-category="custom">
-           
-            <span>عشوائي</span>
-          </div>
-        </div>
-      </div>
-    
-      <div class="form-group">
-        <label> اللعب:</label>
+        <label>نوع اللعب:</label>
         <div class="mode-container">
-            <div class="mode-box selected" data-mode="withTime">
-                <span>بالوقت</span>
-            </div>
-            <div class="mode-box" data-mode="withoutTime">
-                <span>بدون وقت</span>
-            </div>
+          <div class="mode-box selected" data-mode="withTime">
+            <span>بالوقت</span>
+          </div>
+          <div class="mode-box" data-mode="withoutTime">
+            <span>بدون وقت</span>
+          </div>
         </div>
       </div>
-     
       <div class="form-group" id="timeLimitGroup">
         <label for="timeLimitLobby">الوقت (بالثواني):</label>
         <input type="number" id="timeLimitLobby" value="60" min="10">
       </div>
-      
       <div class="form-group">
         <label>عدد المحاولات:</label>
         <div class="attempts-container">
-            <div class="attempts-box selected" data-attempt="3">
-                <span>3</span>
-            </div>
-            <div class="attempts-box" data-attempt="5">
-                <span>5</span>
-            </div>
+          <div class="attempts-box selected" data-attempt="3">
+            <span>3</span>
+          </div>
+          <div class="attempts-box" data-attempt="5">
+            <span>5</span>
+          </div>
         </div>
       </div>
-      <button type="submit">ابدأ اللعبة</button>
+      <button type="submit">التالي</button>
     </form>
+  </div>
+
+  <!-- صفحة اختيار الفئة -->
+  <div id="categories-container" style="display:none;">
+    <h2>اهلا <span id="displayUsername"></span></h2>
+    <p>
+       اللعب: <span id="displayMode"></span> |  المحاولات: <span id="displayAttempts"></span>
+    </p>
+    <h3>اختر الفئة</h3>
+    <div class="category-container">
+      <div class="category-box" data-category="games">
+        <span>العاب</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="countries">
+        <span>دول</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="names">
+        <span>اسماء</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="foods">
+        <span>اكلات</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="movies">
+        <span>شخصيات</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="cities">
+        <span>نباتات</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="animals">
+        <span>حيوانات</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="sports">
+        <span>لاعبين</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="songs">
+        <span>عشوائيات</span>
+        <small class="remaining-count"></small>
+      </div>
+      <div class="category-box" data-category="custom">
+        <span>كلمات</span>
+      </div>
+    </div>
+    <button id="startGameBtn">ابدأ اللعبة</button>
   </div>
 
   <!-- صفحة اللعبة -->
   <div id="game-container" style="display:none;">
+   
+    <button id="backToCategoriesBtn">الفئات</button>
     <h2 id="gameTitle"></h2>
     <p class="remaining-words" id="remainingQuestions"></p>
     <div class="game-body">
@@ -95,14 +123,14 @@
       <button id="nextWordBtn" style="display:none;">الكلمة التالية</button>
       <button id="retryBtn" style="display:none;">إعادة المحاولة</button>
       <button id="showAnswerBtn" style="display:none;">إظهار الإجابة</button>
-      <button id="backBtn" style="display:none;">صفحة اللعبة</button>
+      <button id="backBtn" style="display:none;"> الفئات</button>
     </div>
   </div>
 
 
   <div id="customWordModal" class="modal" style="display:none;">
     <div class="modal-content">
-      <h3>اكتب الكلمة العشوائية</h3>
+      <h3>اكتب الكلمة</h3>
       <input type="password" id="customWordInput">
       <button id="toggleCustomWordVisibility">اظهار</button>
       <div class="modal-buttons">
