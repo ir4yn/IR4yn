@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="العاب تفاعلية مع شات التويتش">
+  <meta name="description" content="العاب تفاعلية مع شات التويتش" />
   <title>العاب راين</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -43,9 +42,21 @@
 
   <div id="modal" class="modal">
     <div class="modal-content">
-      <button class="close-btn" id="modal-close">&times;</button>
+      <button class="close-btn" id="modal-close">×</button>
       <h2>تعليمات اللعبة</h2>
       <p id="modal-text"></p>
+    </div>
+  </div>
+
+  <!-- نافذة منبثقة لاختيار النسخة -->
+  <div id="version-modal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" id="version-modal-close">×</button>
+      <h2>اختر النسخة</h2>
+      <div class="version-buttons">
+        <button class="version-btn" id="normal-version-btn">النسخة العادية</button>
+        <button class="version-btn" id="special-version-btn">النسخة الخاصة</button>
+      </div>
     </div>
   </div>
 </body>

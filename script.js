@@ -1,4 +1,3 @@
-
 if (window.location.pathname.endsWith('index.html')) {
   window.history.replaceState({}, '', window.location.pathname.replace('index.html', ''));
 }
@@ -18,14 +17,21 @@ function updateHeroContent() {
   const activeSlide = slides[currentIndex];
   document.getElementById('hero-title').textContent = activeSlide.dataset.title;
 
-  document.getElementById('play-btn').onclick = () => {
-    window.location.href = activeSlide.dataset.url;
-  };
+  const playBtn = document.getElementById('play-btn');
+  if (activeSlide.dataset.index === "1") { // سباق المشاهدين
+    playBtn.onclick = () => {
+      document.getElementById('version-modal').classList.add('show');
+    };
+  } else {
+    playBtn.onclick = () => {
+      window.location.href = activeSlide.dataset.url;
+    };
+  }
 
   document.getElementById('info-btn').onclick = () => {
     const gameInfo = {
       0: "--",
-      1: "فريقان (الأزرق والأحمر) يتنافسان للوصول إلى المستوى 10 والفوز. اللعبة فيها 10 مراحل، وكل مرحلة لها فئة معينة وعدد محدد من الأسئلة. الأسئلة تُطرح فقط من المرحلة اللي واقف عندها الفريق، إذا جاوب الفريق صح يتقدم خطوة، ولو جاوب مرتين ورا بعض يقدر يختار بين التقدم خطوة أو إرجاع الخصم خطوة للخلف. كل فريق عنده عدد معين من المساعدات يحددها الشخص قبل بدء اللعبة.",
+      1: "",
       2: "--"
     };
     document.getElementById('modal-text').textContent = gameInfo[currentIndex];
@@ -52,7 +58,11 @@ setInterval(() => {
 
 slides.forEach(slide => {
   slide.addEventListener('click', () => {
-    window.location.href = slide.dataset.url;
+    if (slide.dataset.index === "1") {
+      document.getElementById('version-modal').classList.add('show');
+    } else {
+      window.location.href = slide.dataset.url;
+    }
   });
 });
 
@@ -64,5 +74,26 @@ window.addEventListener('click', (e) => {
   const modal = document.getElementById('modal');
   if (e.target === modal) {
     modal.classList.remove('show');
+  }
+});
+
+// إضافة سلوك لأزرار النسخة
+document.getElementById('normal-version-btn').addEventListener('click', () => {
+  window.location.href = './rh1/index.html';
+});
+
+document.getElementById('special-version-btn').addEventListener('click', () => {
+  window.location.href = './rh/index.html';
+});
+
+// إضافة سلوك لإغلاق نافذة اختيار النسخة
+document.getElementById('version-modal-close').addEventListener('click', () => {
+  document.getElementById('version-modal').classList.remove('show');
+});
+
+window.addEventListener('click', (e) => {
+  const versionModal = document.getElementById('version-modal');
+  if (e.target === versionModal) {
+    versionModal.classList.remove('show');
   }
 });
