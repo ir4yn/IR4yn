@@ -177,7 +177,7 @@ const hardcodedQuestions = {
       "image": ""
     },
     "q36": {
-      "text": "ما هو أصلع الطيور لا يطير؟",
+      "text": "ما هو اسرع الطيور التي لا تطير",
       "answer": "النعامة",
       "image": ""
     },
