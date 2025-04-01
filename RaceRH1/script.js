@@ -132,6 +132,11 @@ function updateUI() {
     const stageWidth = 120, stageHeight = 150;
     const circleWidth = 50;
     const offsetX = (stageWidth - circleWidth) / 2;
+    
+    // إزالة أي تأثير توهج من كافة المستطيلات
+    stageElements.removeClass('active-stage');
+    
+    // تحديد مستطيل الفئة الخاصة بفريق الأزرق وتحديث موقع الدائرة الخاصة به
     let blueStageElem = stageElements.filter(function() {
       return $(this).data('stage') === gameState.bluePosition;
     });
@@ -139,6 +144,8 @@ function updateUI() {
       let pos = blueStageElem.position();
       $('#blueCircle').css({ top: pos.top + 10, left: pos.left + offsetX });
     }
+    
+    // تحديد مستطيل الفئة الخاصة بفريق الأحمر وتحديث موقع الدائرة الخاصة به
     let redStageElem = stageElements.filter(function() {
       return $(this).data('stage') === gameState.redPosition;
     });
@@ -146,8 +153,14 @@ function updateUI() {
       let pos = redStageElem.position();
       $('#redCircle').css({ top: pos.top + stageHeight - 50 - 10, left: pos.left + offsetX });
     }
+    
+    // إضافة تأثير التوهج للمستطيل الخاص بالفئة الحالية
+    stageElements.filter(function() {
+      return $(this).data('stage') === activeStage;
+    }).addClass('active-stage');
   }
 }
+
 
 function initLifelines() {
   let blueLifelinesContainer = $(`
@@ -314,6 +327,8 @@ $('#showQuestion').click(function() {
   }
 });
 
+
+
 $(document).on('click', '.team-answer', function() {
   let team = $(this).data('team');
   $('.who-answered p').removeClass('blue-text red-text')
@@ -449,7 +464,7 @@ $('#submitUsername').click(function() {
     return;
   }
   if (!/^[A-Za-z]+[0-9]{3}$/.test(username)) {
-    alert("اسم المستخدم غير صالح.");
+    alert("ERORR");
     return;
   }
   currentUser = username;

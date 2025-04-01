@@ -1088,7 +1088,7 @@ const hardcodedQuestions = {
   },
   "q16": {
     text: "خمن التلميح المشترك بين (بحر + نهر  )؟",
-    answer: "الخمنء",
+    answer: "الماء",
     image: ""
   },
   "q17": {
@@ -1143,7 +1143,7 @@ const hardcodedQuestions = {
   },
   "q27": {
     text: "خمن التلميح المشترك بين (شمس + قمر + نجمة)؟",
-    answer: " سخمنء",
+    answer: " سماء",
     image: ""
   },
   "q28": {
@@ -1172,7 +1172,7 @@ const hardcodedQuestions = {
     image: ""
   },
   "q33": {
-    text: "خمن التلميح المشترك بين (طائرة + خفيف )؟",
+    text: "خمن التلميح المشترك بين (طائرة + خفيفة )؟",
     answer: "ورقية",
     image: ""
   },
@@ -2277,11 +2277,6 @@ const hardcodedQuestions = {
       text: "من اليسار لليمين*اضغط على الصورة*",
       answer: "تم + ام = تمام",
       image: "./images/14.jpg"
-    },
-    "q15": {
-      text: "من اليسار لليمين*اضغط على الصورة*",
-      answer: "سب + اب = سباب",
-      image: "./images/15.jpg"
     },
     "q16": {
       text: "من اليسار لليمين*اضغط على الصورة*",

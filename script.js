@@ -79,11 +79,11 @@ window.addEventListener('click', (e) => {
 
 // إضافة سلوك لأزرار النسخة
 document.getElementById('normal-version-btn').addEventListener('click', () => {
-  window.location.href = './rh1/index.html';
+  window.location.href = './RaceRH1/';
 });
 
 document.getElementById('special-version-btn').addEventListener('click', () => {
-  window.location.href = './rh/index.html';
+  window.location.href = './RaceRH/';
 });
 
 // إضافة سلوك لإغلاق نافذة اختيار النسخة
