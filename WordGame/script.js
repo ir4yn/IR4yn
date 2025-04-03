@@ -3,14 +3,12 @@ let secretWord = "";
 let displayedWord = [];
 let wrongLetters = [];
 let remainingAttempts = 0;
-let timerInterval;
-let timeRemaining = 0;
 let currentCategory = "";
 let username = "";
-let attemptsLobby = 0;
-let timeLimitLobby = 0;
-let retryUsed = false; 
+let attemptsLobby = 5; // ثابت 5 محاولات
+let hintUsed = false;  // للتحقق من استخدام التلميح
 
+// تحميل الكلمات من ملف JSON
 fetch('words.json')
   .then(response => response.json())
   .then(data => {
@@ -60,43 +58,11 @@ document.getElementById("settingsForm").addEventListener("submit", function(e) {
     alert("يرجى إدخال اسم المستخدم.");
     return;
   }
-  let selectedModeElem = document.querySelector('.mode-box.selected');
-  let selectedMode = selectedModeElem.getAttribute('data-mode');
-  if(selectedMode === 'withoutTime'){
-    timeLimitLobby = 0;
-  } else {
-    timeLimitLobby = parseInt(document.getElementById("timeLimitLobby").value);
-  }
-  let selectedAttempt = document.querySelector('.attempts-box.selected').getAttribute('data-attempt');
-  attemptsLobby = parseInt(selectedAttempt);
-
+  // يتم تعيين عدد المحاولات 5 دائماً واللعب بدون وقت
   document.getElementById("displayUsername").innerText = username;
-  document.getElementById("displayMode").innerText = (selectedMode === 'withoutTime') ? "بدون وقت" : "بالوقت";
-  document.getElementById("displayAttempts").innerText = attemptsLobby;
-
-  document.getElementById("settings-container").style.display = "none";
   document.getElementById("categories-container").style.display = "block";
+  document.getElementById("settings-container").style.display = "none";
   updateCategoryCounts();
-});
-
-document.querySelectorAll('.mode-box').forEach(box => {
-  box.addEventListener('click', function() {
-    document.querySelectorAll('.mode-box').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
-    let mode = this.getAttribute('data-mode');
-    if (mode === 'withoutTime') {
-      document.getElementById("timeLimitGroup").style.display = "none";
-    } else {
-      document.getElementById("timeLimitGroup").style.display = "block";
-    }
-  });
-});
-
-document.querySelectorAll('.attempts-box').forEach(box => {
-  box.addEventListener('click', function() {
-    document.querySelectorAll('.attempts-box').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
-  });
 });
 
 document.querySelectorAll('.category-box').forEach(box => {
@@ -114,12 +80,11 @@ document.getElementById("startGameBtn").addEventListener("click", function() {
   }
   currentCategory = selectedCategoryBox.getAttribute("data-category");
   
-  if(currentCategory !== "custom"){
-    let remainingCount = parseInt(selectedCategoryBox.querySelector(".remaining-count").innerText);
-    if(remainingCount <= 0){
-      alert("قريبا");
-      return;
-    }
+  // التحقق من عدد الكلمات المتبقية في الفئة
+  let remainingCount = parseInt(selectedCategoryBox.querySelector(".remaining-count").innerText);
+  if(remainingCount <= 0){
+    alert("قريبا");
+    return;
   }
   
   document.getElementById("gameTitle").innerText = selectedCategoryBox.querySelector("span").innerText;
@@ -129,30 +94,6 @@ document.getElementById("startGameBtn").addEventListener("click", function() {
 });
 
 document.getElementById("backToCategoriesBtn").addEventListener("click", function() {
-  clearInterval(timerInterval);
-  document.getElementById("game-container").style.display = "none";
-  document.getElementById("categories-container").style.display = "block";
-  updateCategoryCounts();
-});
-
-function updateCategoryCounts() {
-  if (!words || Object.keys(words).length === 0) return;
-  document.querySelectorAll('.category-box').forEach(box => {
-    let category = box.getAttribute("data-category");
-    if (category === "custom") return;
-    let total = words[category] ? words[category].length : 0;
-    let usedWords = loadUsedWords(username);
-    let usedCount = usedWords[category] ? usedWords[category].length : 0;
-    let remaining = total - usedCount;
-    let smallElem = box.querySelector(".remaining-count");
-    if (smallElem) {
-      smallElem.innerText = remaining;
-    }
-  });
-}
-
-document.getElementById("backBtn").addEventListener("click", function() {
-  clearInterval(timerInterval);
   document.getElementById("game-container").style.display = "none";
   document.getElementById("backBtn").style.display = "none";
   document.getElementById("nextWordBtn").style.display = "none";
@@ -165,47 +106,74 @@ document.getElementById("backBtn").addEventListener("click", function() {
 
 document.getElementById("nextWordBtn").addEventListener("click", function() {
   document.getElementById("nextWordBtn").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
   document.getElementById("message").innerText = "";
+
+  const hintBtn = document.getElementById("hintBtn");
+  hintBtn.disabled = false;
+  hintBtn.style.backgroundColor = "";
+  
   startGame();
 });
 
-function startGame() {
-  clearInterval(timerInterval);
-  if (currentCategory === "custom") {
-    showCustomWordModal();
-    return;
-  } else {
-    if (Object.keys(words).length === 0) {
-      document.getElementById("message").innerText = "لم يتم تحميل الكلمات بعد، حاول مرة أخرى.";
-      return;
-    }
+function updateCategoryCounts() {
+  if (!words || Object.keys(words).length === 0) return;
+  document.querySelectorAll('.category-box').forEach(box => {
+    let category = box.getAttribute("data-category");
+    let total = words[category] ? words[category].length : 0;
     let usedWords = loadUsedWords(username);
-    let wordList = words[currentCategory];
-    let availableWords = wordList.filter(w => !usedWords[currentCategory].includes(w));
-    
-    if (availableWords.length === 0) {
-      usedWords[currentCategory] = [];
-      saveUsedWords(username, usedWords);
-      availableWords = wordList;
-      document.getElementById("message").innerText = "لقد انتهت الكلمات، تم إعادة تعيين الكلمات.";
+    let usedCount = usedWords[category] ? usedWords[category].length : 0;
+    let remaining = total - usedCount;
+    let smallElem = box.querySelector(".remaining-count");
+    if (smallElem) {
+      smallElem.innerText = remaining;
     }
-    
-    secretWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    usedWords[currentCategory].push(secretWord);
-    saveUsedWords(username, usedWords);
-    let remainingQuestions = wordList.length - usedWords[currentCategory].length;
-    document.getElementById("remainingQuestions").innerText = "باقي " + remainingQuestions;
+  });
+}
+
+document.getElementById("backBtn").addEventListener("click", function() {
+  document.getElementById("game-container").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+  document.getElementById("nextWordBtn").style.display = "none";
+  document.getElementById("retryBtn").style.display = "none";
+  document.getElementById("showAnswerBtn").style.display = "none";
+  document.getElementById("message").innerText = "";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
+});
+
+function startGame() {
+  // عند اختيار فئة معينة
+  if (Object.keys(words).length === 0) {
+    document.getElementById("message").innerText = "لم يتم تحميل الكلمات بعد، حاول مرة أخرى.";
+    return;
   }
+  let usedWords = loadUsedWords(username);
+  let wordList = words[currentCategory];
+  let availableWords = wordList.filter(w => !usedWords[currentCategory].includes(w));
+  
+  if (availableWords.length === 0) {
+    usedWords[currentCategory] = [];
+    saveUsedWords(username, usedWords);
+    availableWords = wordList;
+    document.getElementById("message").innerText = "لقد انتهت الكلمات، تم إعادة تعيين الكلمات.";
+  }
+  
+  secretWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+  usedWords[currentCategory].push(secretWord);
+  saveUsedWords(username, usedWords);
+  let remainingQuestions = wordList.length - usedWords[currentCategory].length;
+  document.getElementById("remainingQuestions").innerText = "باقي " + remainingQuestions;
+  
   initializeGame();
 }
 
 function initializeGame() {
-  clearInterval(timerInterval);
-  retryUsed = false; 
+  // إعادة تعيين المتغيرات لكل جولة جديدة
+  hintUsed = false;
   displayedWord = secretWord.split("").map(char => char === " " ? " " : "_");
   wrongLetters = [];
   remainingAttempts = attemptsLobby;
-  timeRemaining = timeLimitLobby;
   
   document.getElementById("letterInput").disabled = false;
   document.getElementById("guessBtn").disabled = false;
@@ -213,55 +181,9 @@ function initializeGame() {
   document.getElementById("showAnswerBtn").style.display = "none";
   document.getElementById("nextWordBtn").style.display = "none";
   document.getElementById("message").innerText = "";
+  document.getElementById("hintBtn").disabled = false;
   
   updateDisplay();
-  
-  if (timeLimitLobby > 0) {
-    timerInterval = setInterval(updateTimer, 1000);
-  } else {
-    document.getElementById("timeRemaining").innerText = "∞";
-  }
-}
-
-function showCustomWordModal() {
-  let modal = document.getElementById("customWordModal");
-  modal.style.display = "flex";
-  let customInput = document.getElementById("customWordInput");
-  customInput.value = "";
-  customInput.type = "password";
-  document.getElementById("toggleCustomWordVisibility").innerText = "اظهار";
-
-  let toggleBtn = document.getElementById("toggleCustomWordVisibility");
-  toggleBtn.onclick = function() {
-    if (customInput.type === "password") {
-      customInput.type = "text";
-      toggleBtn.innerText = "إخفاء";
-    } else {
-      customInput.type = "password";
-      toggleBtn.innerText = "اظهار";
-    }
-  };
-
-  document.getElementById("customWordSubmit").onclick = function() {
-    let customWord = customInput.value.trim();
-    if (!customWord) {
-      alert("يجب إدخال كلمة صحيحة.");
-      return;
-    }
-    if (!/^[\u0621-\u064A]+$/.test(customWord)) {
-      alert(" أحرف عربية فقط.");
-      return;
-    }
-    secretWord = customWord;
-    modal.style.display = "none";
-    document.getElementById("remainingQuestions").innerText = "";
-    initializeGame();
-  };
-
-  document.getElementById("customWordCancel").onclick = function() {
-    modal.style.display = "none";
-    document.getElementById("categories-container").style.display = "block";
-  };
 }
 
 function updateDisplay() {
@@ -275,22 +197,6 @@ function updateDisplay() {
     container.appendChild(span);
   });
   document.getElementById("remainingAttempts").innerText = remainingAttempts;
-  if(timeLimitLobby > 0) {
-    document.getElementById("timeRemaining").innerText = timeRemaining;
-  }
-}
-
-function updateTimer() {
-  if (timeRemaining > 0) {
-    timeRemaining--;
-    document.getElementById("timeRemaining").innerText = timeRemaining;
-  } else {
-    clearInterval(timerInterval);
-    document.getElementById("message").innerText = "انتهى الوقت!";
-    disableInput();
-    document.getElementById("retryBtn").style.display = "block";
-    document.getElementById("showAnswerBtn").style.display = "block";
-  }
 }
 
 function disableInput() {
@@ -324,21 +230,50 @@ function guessLetter() {
     remainingAttempts--;
   }
   updateDisplay();
+  
   if (!displayedWord.includes("_")) {
-    clearInterval(timerInterval);
+    // اللاعب فاز، نعرض الكلمة الكاملة
     document.getElementById("wordDisplay").innerText = secretWord;
-    document.getElementById("message").innerText = "صححح يامجنووووووووون";
+    
+    // قائمة برسائل احتفالية متنوعة
+    const winMessages = [
+      "صح يامجنوووووووووون",
+      " يا اسطوووووورة",
+      "ياااا قوووووتك",
+      " انت كيييييييف",
+      "استمر",
+      "ياسلاااااام",
+      "احسنت",
+      "وااااااااااو",
+      " يافنااااان",
+      " ماشاءالله عليييك",
+      "استمرر يابطل",
+      "مجنوووووووون",
+      "  يااا قوييييي",
+      " يالعيييييييييييب"
+    ];
+    // اختيار رسالة عشوائية
+    const randomMessage = winMessages[Math.floor(Math.random() * winMessages.length)];
+    document.getElementById("message").innerText = randomMessage;
+    
     disableInput();
     document.getElementById("nextWordBtn").style.display = "block";
     document.getElementById("backBtn").style.display = "block";
+    
+    // تشغيل احتفالية قصاصات باستخدام مكتبة canvas-confetti
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   } else if (remainingAttempts <= 0) {
-    clearInterval(timerInterval);
     document.getElementById("message").innerText = "انتهت المحاولات!";
     disableInput();
     document.getElementById("retryBtn").style.display = "block";
     document.getElementById("showAnswerBtn").style.display = "block";
   }
 }
+
 
 document.getElementById("guessBtn").addEventListener("click", guessLetter);
 document.getElementById("letterInput").addEventListener("keyup", function(event) {
@@ -348,18 +283,9 @@ document.getElementById("letterInput").addEventListener("keyup", function(event)
 });
 
 document.getElementById("retryBtn").addEventListener("click", function() {
-  if (retryUsed) {
-    document.getElementById("message").innerText = "بسسس ياحبيبي";
-    return;
-  }
-  retryUsed = true;
   document.getElementById("retryBtn").style.display = "none";
   document.getElementById("showAnswerBtn").style.display = "none";
   remainingAttempts = attemptsLobby;
-  if (timeLimitLobby > 0) {
-    timeRemaining = timeLimitLobby;
-    timerInterval = setInterval(updateTimer, 1000);
-  }
   document.getElementById("letterInput").disabled = false;
   document.getElementById("guessBtn").disabled = false;
   document.getElementById("message").innerText = "";
@@ -375,3 +301,34 @@ document.getElementById("showAnswerBtn").addEventListener("click", function() {
   disableInput();
   document.getElementById("nextWordBtn").style.display = "block";
 });
+
+document.getElementById("hintBtn").addEventListener("click", function() {
+  if (hintUsed) {
+    document.getElementById("message").innerText = "لقد استخدمت التلميح بالفعل.";
+    return;
+  }
+  // تغيير لون زر التلميح ليبدو أنه مستعمل
+  this.style.backgroundColor = "gray"; // اختر اللون الذي تفضله
+
+  // إيجاد الفهارس التي لا يزال فيها "_" في الكلمة المعروضة
+  const hiddenIndexes = [];
+  displayedWord.forEach((char, index) => {
+    if (char === "_") hiddenIndexes.push(index);
+  });
+  if (hiddenIndexes.length === 0) return;
+  
+  const randomIndex = hiddenIndexes[Math.floor(Math.random() * hiddenIndexes.length)];
+  
+  // عرض الحرف مؤقتاً دون تغييره في المتغير الأصلي
+  const tempDisplay = displayedWord.slice();
+  tempDisplay[randomIndex] = secretWord[randomIndex];
+  document.getElementById("wordDisplay").innerText = tempDisplay.join(" ");
+  
+  hintUsed = true;
+  document.getElementById("hintBtn").disabled = true;
+  
+  setTimeout(() => {
+    document.getElementById("wordDisplay").innerText = displayedWord.join(" ");
+  }, 1000);
+});
+

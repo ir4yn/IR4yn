@@ -4,13 +4,14 @@
   font-family: 'Tajawal', sans-serif !important;
 }
 
+
 #lobby {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #0A192F, #1E3A5F);
+  background: linear-gradient(135deg, #2C3639, #3F4E4F);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -19,7 +20,7 @@
   align-items: center;
   justify-content: center;
   z-index: 12000;
-  color: #F7FAFC;
+  color: #DCD7C9;
   backdrop-filter: blur(3px);
 }
 
@@ -56,7 +57,7 @@
 .lobby-team label {
   font-size: 1.2em;
   margin-bottom: 5px;
-  color: #F7FAFC;
+  color: #DCD7C9;
 }
 
 .lobby-team textarea {
@@ -68,8 +69,8 @@
   height: 80px;
   resize: none;
   text-align: center;
-  background-color: #a09b90;
-  color: #2f343d;
+  background-color: #8c8178;
+  color: #2C3639;
 }
 
 #startGameBtn {
@@ -79,13 +80,13 @@
   cursor: pointer;
   border-radius: 5px;
   border: none;
-  background: #000000;
-  color: #F7FAFC;
+  background: #3F4E4F;
+  color: #DCD7C9;
   transition: background 0.3s ease;
 }
 
 #startGameBtn:hover {
-  background: #4e5f98;
+  background: #2C3639;
 }
 
 #lobbySettingsBtn {
@@ -94,18 +95,18 @@
   cursor: pointer;
   border-radius: 5px;
   border: none;
-  background: #000000;
-  color: #F7FAFC;
+  background: #3F4E4F;
+  color: #DCD7C9;
   transition: background 0.3s ease;
 }
 
 #lobbySettingsBtn:hover {
-  background: #4e5f98;
+  background: #2C3639;
 }
 
 #lobbySettingsDropdown {
   margin-top: 10px;
-  background: rgba(74, 85, 104, 0);
+  background: rgba(63, 78, 79, 0.1);
   padding: 10px;
   border-radius: 5px;
   display: flex;
@@ -120,13 +121,13 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background: #4e5f98;
-  color: #F7FAFC;
+  background: #A27B5C;
+  color: #DCD7C9;
   transition: background 0.3s ease;
 }
 
 #lobbySettingsDropdown button:hover {
-  background: #4e5f98;
+  background: #3F4E4F;
 }
 
 #lobbyScoreOptions {
@@ -142,17 +143,17 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background: #4e5f98;
-  color: #F7FAFC;
+  background: #A27B5C;
+  color: #DCD7C9;
   transition: background 0.3s ease;
 }
 
 #lobbyScoreOptions button:hover {
-  background: #4e5f98;
+  background: #3F4E4F;
 }
 
 body {
-  background: linear-gradient(135deg, #0A192F, #1E3A5F);
+  background-image: url(./images/khbl.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -163,7 +164,7 @@ body {
   height: 100vh;
   margin: 0;
   overflow: hidden;
-  color: #F7FAFC;
+  color: #DCD7C9;
   position: relative;
 }
 
@@ -174,7 +175,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.473);
+  background: #000000d4;
 }
 
 #team1Box, #team2Box {
@@ -211,7 +212,7 @@ body::before {
 
 .team-name {
   font-size: 1.5rem;
-  color: #F7FAFC;
+  color: #DCD7C9;
   font-weight: bold;
   margin-bottom: 10px;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
@@ -219,7 +220,7 @@ body::before {
 
 .team-score {
   font-size: 3rem;
-  color: #F7FAFC;
+  color: #DCD7C9;
   font-weight: bold;
   margin: 0;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
@@ -229,7 +230,7 @@ body::before {
   margin-top: 10px;
   font-size: 1rem;
   text-align: center;
-  color: #F7FAFC;
+  color: #DCD7C9;
 }
 
 #team1Box.active {
@@ -253,19 +254,95 @@ body::before {
   background-color: transparent;
   margin: 0 auto;
 }
+/* نافذة الإعدادات الكاملة */
+#gameSettingsModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 13000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* تفعيل النافذة */
+#gameSettingsModal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* محتوى النافذة */
+#gameSettingsModal .modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* العنوان */
+#gameSettingsModal .modal-content h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* حقول النص */
+#gameSettingsModal .modal-content textarea {
+  width: 100%;
+  height: 100px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  resize: none;
+  font-size: 1rem;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* أزرار النافذة */
+#gameSettingsModal .modal-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+#gameSettingsModal .modal-content button {
+  background: #2C3639;
+  color: #DCD7C9;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+}
+
+#gameSettingsModal .modal-content button:hover {
+  background: #3F4E4F;
+}
 
 .gold-card {
   width: 70px;
   height: 70px;
-  background-color: #1b1b1ba4;
+  background-color: #30353e;
   border-radius: 10px;
-  border: 1px solid #10e4f3;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2), inset 0 0 6px rgba(139, 111, 71, 0.3);
+  border: 0px solid #DCD7C9;
+  box-shadow: inset 0 0 10px rgba(3, 3, 3, 0.2), inset 0 0 6px rgba(131, 122, 122, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  color: #F7FAFC;
+  color: #DCD7C9;
   text-align: center;
   position: relative;
   cursor: pointer;
@@ -275,14 +352,14 @@ body::before {
 .gold-card.selected.team1 {
   background-color: rgba(231, 76, 60, 0.3);
   border-color: #e74c3c;
-  color: #F7FAFC;
+  color: #DCD7C9;
   box-shadow: 0 0 15px 5px rgba(231, 76, 60, 0.5);
 }
 
 .gold-card.selected.team2 {
   background-color: rgba(52, 152, 219, 0.3);
   border-color: #3498db;
-  color: #F7FAFC;
+  color: #DCD7C9;
   box-shadow: 0 0 15px 5px rgba(52, 152, 219, 0.5);
 }
 
@@ -304,20 +381,23 @@ body::before {
   background-color: rgba(0,0,0,0.1);
 }
 
+
+
 .progress-bar {
   width: 0%;
   height: 50%;
-  background-color: #F7FAFC;
+  background-color: #DCD7C9;
   transition: width 0.3s linear;
 }
 
 .gold-card img {
-  width: 80%;
-  height: 80%;
-  object-fit: contain;
+  width: 70%;
+  height: 70%;
+  object-fit: contain; 
   display: block;
   margin: auto;
 }
+
 
 #boostModal {
   position: fixed;
@@ -325,7 +405,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(45, 55, 72, 0.8);
+  background: rgba(44, 54, 57, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -341,19 +421,19 @@ body::before {
   gap: 20px;
   padding: 20px;
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(220, 215, 201, 0.1);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   text-align: center;
   transition: opacity 0.5s ease-in-out;
-  color: #F7FAFC;
+  color: #DCD7C9;
 }
 
 .boost-btn {
   margin: 3px;
   padding: 10px 20px;
   font-size: 1em;
-  background: #4e5f98;
-  color: #F7FAFC;
+  background: #A27B5C;
+  color: #DCD7C9;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -366,8 +446,8 @@ body::before {
 }
 
 .boost-card-option {
-  background: #0A2742;         
-  color: #ffffff;               
+  background: #2C3639;         
+  color: #DCD7C9;               
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -394,13 +474,13 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(45, 55, 72, 0.8);
+  background: rgba(44, 54, 57, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 12000;
-  color: #F7FAFC;
+  color: #DCD7C9;
   text-align: center;
   padding: 20px;
   transition: opacity 0.5s ease-in-out;
@@ -415,8 +495,8 @@ body::before {
   margin: 15px;
   padding: 10px 20px;
   font-size: 1em;
-  background: #4e5f98;
-  color: #F7FAFC;
+  background: #A27B5C;
+  color: #DCD7C9;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -425,7 +505,7 @@ body::before {
 
 .reset-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(54, 142, 237, 0.7);
+  box-shadow: 0 0 15px rgba(162, 123, 92, 0.7);
 }
 
 @keyframes explode {

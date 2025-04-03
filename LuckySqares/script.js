@@ -66,6 +66,40 @@ document.addEventListener("DOMContentLoaded", () => {
     startGame();
   });
 
+
+  function runConfetti() {
+    const duration = 10 * 1000; // مدة التأثير 30 ثانية
+    const animationEnd = Date.now() + duration;
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 13000,
+    };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        return;
+      }
+      const particleCount = 50 * (timeLeft / duration);
+      // إطلاق القصاصات من جهتين
+      confetti(Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+      }));
+      confetti(Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+      }));
+    }, 250);
+  }
+
   function startGame() {
     let initialScore = localStorage.getItem("initialScore") || 200;
     initialScore = Number(initialScore);
@@ -150,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    
     function showFinalOverlay(losingTeam) {
       const winningTeamName = losingTeam === "team1" ? "ازرق" : "احمر";
       const winningTeamColor = losingTeam === "team1" ? "#3498db" : "#e74c3c";
@@ -189,44 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       document.body.appendChild(finalOverlay);
 
-      function createFirework() {
-        const firework = document.createElement("div");
-        firework.className = "firework";
-        firework.style.position = "absolute";
-        firework.style.left = `${Math.random() * 80 + 10}%`;
-        firework.style.top = `${Math.random() * 80 + 10}%`;
-        finalOverlay.appendChild(firework);
-
-        for (let i = 0; i < 30; i++) {
-          const particle = document.createElement("div");
-          particle.className = "firework-particle";
-          particle.style.position = "absolute";
-          particle.style.width = "8px";
-          particle.style.height = "8px";
-          particle.style.backgroundColor = winningTeamColor;
-          particle.style.borderRadius = "50%";
-          particle.style.opacity = "1";
-          particle.style.transform = "translate(-50%, -50%)";
-          const angle = (Math.PI * 2 * i) / 30;
-          const distance = Math.random() * 100 + 50;
-          particle.style.animation = `explode 1s ease-out forwards`;
-          particle.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
-          particle.style.setProperty("--y", `${Math.sin(angle) * distance}px`);
-          firework.appendChild(particle);
-        }
-
-        setTimeout(() => firework.remove(), 1000);
-      }
-
-      let fireworkCount = 0;
-      const fireworkInterval = setInterval(() => {
-        if (fireworkCount < 5) {
-          createFirework();
-          fireworkCount++;
-        } else {
-          clearInterval(fireworkInterval);
-        }
-      }, 500);
+      // تفعيل الاحتفالية بتأثير القصاصات
+      runConfetti();
 
       resetBtn.addEventListener("click", () => {
         finalOverlay.style.opacity = "0";
@@ -260,56 +259,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createBoard() {
       const images = [
-        "images/snake.png",
-        "images/tortoise.png",
-        "images/bat.png",
-        "images/camel-head.png",
-        "images/cat.png",
-        "images/panda.png",
-        "images/gorilla.png",
-        "images/cow.png",
-        "images/dinosaur-rex.png",
-        "images/duck.png",
-        "images/elephant.png",
-        "images/horse-head.png",
-        "images/frog.png",
-        "images/snail.png",
-        "images/mite-alt.png",
-        "images/rooster.png",
-        "images/rabbit.png",
-        "images/dolphin.png",
-        "images/tiger-head.png",
-        "images/labrador-head.png",
-        "images/gamepad.png",
-        "images/coffee-mug.png",
-        "images/halt.png",
-        "images/hamburger.png",
-        "images/hearts.png",
-        "images/flame.png",
-        "images/light-bulb.png",
-        "images/open-book.png",
-        "images/checkered-flag.png",
-        "images/pencil.png",
-        "images/phone.png",
-        "images/photo-camera.png",
-        "images/pistol-gun.png",
+        "images/1.png",
+        "images/2.png",
+        "images/3.png",
+        "images/4.png",
+        "images/5.png",
+        "images/6.png",
+        "images/7.png",
+        "images/8.png",
+        "images/9.png",
+        "images/10.png",
+        "images/11.png",
+        "images/12.png",
+        "images/13.png",
+        "images/14.png",
+        "images/15.png",
+        "images/16.png",
+        "images/17.png",
+        "images/18.png",
+        "images/19.png",
+        "images/20.png",
+        "images/21.png",
+        "images/22.png",
+        "images/23.png",
+        "images/24.png",
+        "images/25.png",
+        "images/26.png",
+        "images/27.png",
+        "images/28.png",
+        "images/29.png",
+        "images/30.png",
+        "images/31.png",
+        "images/32.png",
+        "images/33.png",
         "images/img5.png",
         "images/img5.png",
         "images/img5.png",
         "images/img5.png",
-        "images/race-car.png",
-        "images/smartphone.png",
-        "images/full-pizza.png",
-        "images/blender.png",
-        "images/soccer-ball.png",
-        "images/trophy.png",
+        "images/34.png",
+        "images/35.png",
+        "images/36.png",
+        "images/37.png",
+        "images/38.png",
+        "images/39.png",
         "images/img5.png",
         "images/img5.png",
         "images/img5.png",
         "images/img5.png",
-        "images/alarm-clock.png",
-        "images/round-star.png",
-        "images/chess-queen.png",
+        "images/40.png",
+        "images/41.png",
+        "images/42.png",
         "images/a.png",
         "images/b.png",
         "images/c.png",
@@ -330,26 +329,26 @@ document.addEventListener("DOMContentLoaded", () => {
         "images/s.png",
         "images/t.png",
         "images/w.png",
-        "images/1.png",
-        "images/2.png",
-        "images/3.png",
-        "images/4.png",
-        "images/5.png",
-        "images/6.png",
-        "images/7.png",
-        "images/8.png",
-        "images/9.png",
-        "images/10.png",
-        "images/telegram.png",
-        "images/twitch.png",
-        "images/discord.png",
-        "images/application.png",
-        "images/twitter.png",
-        "images/tiktok.png",
-        "images/social (3).png",
-        "images/social (2).png",
-        "images/social (1).png",
-        "images/social.png",
+        "images/53.png",
+        "images/54.png",
+        "images/55.png",
+        "images/56.png",
+        "images/57.png",
+        "images/58.png",
+        "images/59.png",
+        "images/60.png",
+        "images/61.png",
+        "images/62.png",
+        "images/43.png",
+        "images/44.png",
+        "images/45.png",
+        "images/46.png",
+        "images/47.png",
+        "images/48.png",
+        "images/49.png",
+        "images/50.png",
+        "images/51.png",
+        "images/52.png",
       ];
       let totalCards = 90;
       let cardList = [];
@@ -542,7 +541,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const cardDiv = document.createElement("div");
         cardDiv.className = "boost-card-option";
         cardDiv.textContent = text;
-       
         cardDiv.style.background = "#0A2742"; 
         cardDiv.style.color = "#ffffff";         
         cardDiv.style.padding = "20px";
@@ -555,7 +553,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return cardDiv;
       }
       
-
       const option1 = createOptionCard("أخذ الرقم");
       const option2 = createOptionCard("مربع جديد");
       const option3 = createOptionCard("نرد");
@@ -581,7 +578,6 @@ document.addEventListener("DOMContentLoaded", () => {
           "2. مربع جديد: يختار اللاعب مربع جديد، وإذا كان رقمه موجباً يحصل على 35 + الرقم الموجب، وإذا كان سالباً يحصل على الرقم السالب فقط.\n\n" +
           "3. نرد: إذا حصل اللاعب على رقم أعلى من رقم البوت، يكسب 70 نقطة (35 + 35)، وإذا حصل على رقم أقل أو تعادل، يُخصم منه 35 نقطة."
         );
-        
       });
 
       option1.addEventListener("click", () => {
