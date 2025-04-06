@@ -29,8 +29,8 @@ function loadUserData(uid) {
   const userRef = firebase.database().ref('users/' + uid);
   return userRef.once('value').then((snapshot) => {
     currentUserData = snapshot.val() || {};
-    // إعادة تعيين بيانات الإجابات بحيث تظهر الأسئلة فور دخول المستخدم
-    currentUserData.answeredQuestions = {};
+    // لا نقوم بإعادة تعيين answeredQuestions هنا حتى تظل الأسئلة المحذوفة محفوظة للمستخدم
+    // currentUserData.answeredQuestions = {};  <-- هذا السطر تمت إزالته
 
     if (!currentUserData.gameState) {
       currentUserData.gameState = {
@@ -83,6 +83,7 @@ function resetGame() {
   gameState.bluePosition = 1;
   gameState.redPosition = 1;
   activeStage = 1;
+  consecutiveCount = 0;
   gameState.blueLifelineChoices = [];
   gameState.redLifelineChoices = [];
   updateUI();
@@ -93,6 +94,8 @@ function resetGame() {
   $('#answerDisplay').empty();
   updateQuestionCounts();
   saveGameState();
+  // لا نقوم بحذف answeredQuestions هنا؛ بحيث تظل الأسئلة المحذوفة من قبل المستخدم محفوظة نهائيًا
+  alert("تم إعادة تعيين القيم، والأسئلة المُجابة ستبقى محذوفة للمستخدم.");
 }
 
 function initStages() {
@@ -116,6 +119,7 @@ function updateQuestionCounts() {
   for (let stage = 1; stage <= 10; stage++) {
     let count = 0;
     if (gameState.questions[stage]) {
+      // يتم استبعاد الأسئلة التي تم الإجابة عليها من قبل المستخدم بشكل دائم
       const userAnswered = (currentUserData && currentUserData.answeredQuestions && currentUserData.answeredQuestions[stage]) || [];
       count = Object.keys(gameState.questions[stage]).filter(qid => !userAnswered.includes(qid)).length;
     }
@@ -334,6 +338,7 @@ $('#showAnswerButton').click(function() {
   if (!currentUserData.answeredQuestions[activeStage]) {
     currentUserData.answeredQuestions[activeStage] = [];
   }
+  // حفظ السؤال المُجاب بحيث لن يظهر مرة أخرى للمستخدم
   currentUserData.answeredQuestions[activeStage].push(window.currentQuestionId);
   firebase.database().ref('users/' + currentUser + '/answeredQuestions').set(currentUserData.answeredQuestions);
   window.currentQuestionId = null;
@@ -417,8 +422,7 @@ $(document).ready(function() {
     if (user) {
       currentUser = user.uid;
       loadUserData(user.uid).then(() => {
-        // إعادة تعيين حالة اللعبة فور دخول المستخدم بحيث تظهر الأسئلة فوراً
-        resetGame();
+        // عدم استدعاء resetGame هنا حتى تظل answeredQuestions محفوظة للمستخدم
         $('#gameContainer').show();
         initStages();
         loadStageConfigurations();
