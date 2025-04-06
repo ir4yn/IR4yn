@@ -27,8 +27,11 @@ function saveGameState() {
 
 function loadUserData(uid) {
   const userRef = firebase.database().ref('users/' + uid);
-  userRef.once('value').then((snapshot) => {
-    currentUserData = snapshot.val() || { answeredQuestions: {} };
+  return userRef.once('value').then((snapshot) => {
+    currentUserData = snapshot.val() || {};
+    // إعادة تعيين بيانات الإجابات بحيث تظهر الأسئلة فور دخول المستخدم
+    currentUserData.answeredQuestions = {};
+
     if (!currentUserData.gameState) {
       currentUserData.gameState = {
         bluePosition: 1,
@@ -413,13 +416,16 @@ $(document).ready(function() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       currentUser = user.uid;
-      loadUserData(user.uid);
-      $('#gameContainer').show();
-      initStages();
-      loadStageConfigurations();
-      updateUI();
-      initLifelines();
-      updateQuestionCounts();
+      loadUserData(user.uid).then(() => {
+        // إعادة تعيين حالة اللعبة فور دخول المستخدم بحيث تظهر الأسئلة فوراً
+        resetGame();
+        $('#gameContainer').show();
+        initStages();
+        loadStageConfigurations();
+        updateUI();
+        initLifelines();
+        updateQuestionCounts();
+      });
     } else {
       window.location.href = "/login.html";
     }
