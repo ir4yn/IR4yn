@@ -7,66 +7,37 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="../js/firebaseConfig.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="questions.js"></script>
 </head>
 <body>
-  <!-- واجهة إدخال اسم المستخدم -->
-  <div id="userOverlay">
-    <div class="auth-card">
-      <h1>سباق المشاهدين</h1>
-      <p>النسخة العادية</p>
-      <input type="text" id="usernameInput" placeholder="اسم المستخدم" class="form-control mb-2">
-      <small class="d-block mb-2"></small>
-      <button id="submitUsername" class="btn btn-primary w-100">دخول</button>
-      <div class="social-links mt-2 text-center">
-        <div class="social-item">
-          <i class="fa-brands fa-x-twitter social-icon"></i>
-          <span>IR4yn</span>
-        </div>
-        <span class="separator">-</span>
-        <div class="social-item">
-          <i class="fa-brands fa-discord social-icon"></i>
-          <span>lr4yn</span>
-        </div>
-      </div>
-      
-    </div>
-    
-  </div>
-  
-  <!-- حاوية اللعبة -->
-  <div id="gameContainer" style="display:none;">
+  <div id="gameContainer">
     <div id="controls">
       <button id="showQuestion" class="btn btn-primary m-1">السؤال</button>
-      <!-- زر الإجابة مخفي حتى يتم الضغط على زر السؤال -->
       <button id="showAnswerButton" class="btn btn-primary m-1" style="display: none;">الإجابة</button>
       <button id="resetGame" class="btn btn-success m-1" style="display: none;">إعادة تعيين القيم</button>
       <button id="settingsButton" class="btn btn-secondary m-1">الإعدادات</button>
     </div>
-    
-    <!-- مربع السؤال الثابت في الوسط -->
     <div id="questionDisplay" class="question-display"></div>
     <div id="answerDisplay" class="answer-display"></div>
-    
     <div id="board">
       <div class="team-circle blue" id="blueCircle">أزرق</div>
       <div class="team-circle red" id="redCircle">أحمر</div>
       <div id="stagesContainer"></div>
     </div>
-    
-    <!-- نافذة الخيارات "تقديم/ترجيع" -->
     <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content decision-modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="decisionModalLabel">تقديم = تقدم فريقك خطوة 
-              - ترجيع = ترجع الخصم خطوة للخلف 
-            </h5>
+            <h5 class="modal-title" id="decisionModalLabel">تقديم = تقدم فريقك خطوة - ترجيع = ترجع الخصم خطوة للخلف</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body text-center">
-          </div>
+          <div class="modal-body text-center"></div>
           <div class="modal-footer justify-content-center">
             <button id="chooseAdvance" class="decision-btn-advance" data-bs-dismiss="modal">تقديم</button>
             <button id="choosePush" class="decision-btn-push" data-bs-dismiss="modal">ترجيع</button>
@@ -74,8 +45,6 @@
         </div>
       </div>
     </div>
-
-    <!-- نافذة إعدادات اللعبة -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -85,20 +54,15 @@
           </div>
           <div class="modal-body">
             <div class="settings-options d-grid gap-3">
-              <!-- زر إعادة تعيين القيم (إعادة تعيين كل القيم باستثناء الأسئلة) -->
               <button id="resetValues" class="btn btn-danger w-100">إعادة تعيين القيم</button>
-              <!-- زر إعادة تعيين المساعدات -->
               <button id="resetLifelines" class="btn btn-warning w-100">إعادة تعيين المساعدات</button>
-              <!-- زر تسجيل الخروج -->
-              <button id="logout" class="btn btn-secondary w-100">تسجيل خروج</button>
-              <!-- زر عرض طريقة اللعب -->
+              <button id="backToHome" class="btn btn-primary">العودة للصفحة الرئيسية</button>
               <button id="gameplayButton" class="btn btn-info w-100">طريقة اللعب</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
     <div class="modal fade" id="gameplayModal" tabindex="-1" aria-labelledby="gameplayModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -107,12 +71,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <p>تقسم الشات لفريقين (أحمر وأزرق) وتحدد كابتن لكل فريق، الفريق اللي يجاوب مرتين ورا بعض يقدر يتقدم أو يرجّع الخصم (الكابتن يتشاور مع التيم ويقرر)، الأسئلة تطلع من آخر مرحلة وصل لها الفريق (آخر حركة)، لكل فريق 3 مساعدات تُستخدم مرة وحدة بالقيم (الكابتن يتشاور مع التيم ويختار قبل السؤال)، اللعبة 10 مراحل تبدأ بأسئلة عامة، أول شخص يجاوب صح تشوف وش تيمه وتقدمهم خطوة، إذا جاوبوا مرتين ورا بعض تسألهم وش يبون تقديم خطوة او ترجيع الخصم ، لا تنسى تضغط زر الإجابة بعد السؤال مباشرة وتغطي مكانها.</p>
+            <p>تقسم الشات لفريقين (أحمر وأزرق) وتحدد كابتن لكل فريق، الفريق اللي يجاوب مرتين ورا بعض يقدر يتقدم أو يرجّع الخصم (الكابتن يتشاور مع التيم ويقرر)، الأسئلة تطلع من آخر مرحلة وصل لها الفريق (آخر حركة)، لكل فريق 3 مساعدات تُستخدم مرة وحدة بالقيم (الكابتن يتشاور مع التيم ويختار قبل السؤال)، اللعبة 10 مراحل تبدأ بأسئلة عامة، أول شخص يجاوب صح تشوف وش تيمه وتقدمهم خطوة، إذا جاوبوا مرتين ورا بعض تسألهم وش يبون تقديم خطوة او ترجيع الخصم، لا تنسى تضغط زر الإجابة بعد السؤال مباشرة وتغطي مكانها.</p>
           </div>
         </div>
       </div>
     </div>
-    
     <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -124,16 +87,10 @@
     </div>
   </div>
   
-  <!-- تضمين ملفات الجافا سكريبت -->
-  <script src="questions.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- تضمين مكتبة FitText.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1/dist/confetti.browser.min.js"></script>
-
-  
-
 </body>
 </html>

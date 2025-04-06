@@ -1,6 +1,13 @@
-if (window.location.pathname.endsWith('index.html')) {
-  window.history.replaceState({}, '', window.location.pathname.replace('index.html', ''));
-}
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    firebase.database().ref('users/' + user.uid).once('value')
+      .then((snapshot) => {
+        const userData = snapshot.val();
+        const username = userData && userData.username ? userData.username : user.email;
+        document.getElementById('user-email').textContent = username;
+      });
+  }
+});
 
 const slides = document.querySelectorAll('.slide');
 let currentIndex = 0;
@@ -16,9 +23,8 @@ function updateSlides() {
 function updateHeroContent() {
   const activeSlide = slides[currentIndex];
   document.getElementById('hero-title').textContent = activeSlide.dataset.title;
-
   const playBtn = document.getElementById('play-btn');
-  if (activeSlide.dataset.index === "1") { // سباق المشاهدين
+  if (activeSlide.dataset.index === "1") {
     playBtn.onclick = () => {
       document.getElementById('version-modal').classList.add('show');
     };
@@ -27,7 +33,6 @@ function updateHeroContent() {
       window.location.href = activeSlide.dataset.url;
     };
   }
-
   document.getElementById('info-btn').onclick = () => {
     const gameInfo = {
       0: "--",
@@ -54,7 +59,7 @@ updateSlides();
 setInterval(() => {
   currentIndex = (currentIndex + 1) % slides.length;
   updateSlides();
-}, 8000);
+}, 10000);
 
 slides.forEach(slide => {
   slide.addEventListener('click', () => {
@@ -77,7 +82,6 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// إضافة سلوك لأزرار النسخة
 document.getElementById('normal-version-btn').addEventListener('click', () => {
   window.location.href = './RaceRH1/';
 });
@@ -86,7 +90,6 @@ document.getElementById('special-version-btn').addEventListener('click', () => {
   window.location.href = './RaceRH/';
 });
 
-// إضافة سلوك لإغلاق نافذة اختيار النسخة
 document.getElementById('version-modal-close').addEventListener('click', () => {
   document.getElementById('version-modal').classList.remove('show');
 });
@@ -96,4 +99,31 @@ window.addEventListener('click', (e) => {
   if (e.target === versionModal) {
     versionModal.classList.remove('show');
   }
+});
+
+const hamburger = document.getElementById("hamburger");
+const sidebar = document.getElementById("sidebar");
+const closeSidebar = document.getElementById("close-sidebar");
+const logoutBtn = document.getElementById("logout-btn");
+
+hamburger.addEventListener("click", () => {
+  sidebar.classList.add("show");
+});
+
+closeSidebar.addEventListener("click", () => {
+  sidebar.classList.remove("show");
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === sidebar) {
+    sidebar.classList.remove("show");
+  }
+});
+
+logoutBtn.addEventListener("click", () => {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "login.html";
+  }).catch((error) => {
+    console.error("خطأ في تسجيل الخروج:", error);
+  });
 });

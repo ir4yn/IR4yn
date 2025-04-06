@@ -4,25 +4,44 @@
   <meta charset="UTF-8">
   <title>لعبة الكلمات</title>
   <link rel="icon" type="image/png" href="./images/icon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- مكتبات Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <!-- إعدادات Firebase -->
+  <script src="../js/firebaseConfig.js"></script>
+  <!-- كود التحقق من المصادقة -->
+  <script src="../js/auth.js"></script>
 </head>
 <body>
-  <!-- صفحة إعدادات اللعبة -->
-  <div id="settings-container">
-    <h2>إعدادات اللعبة</h2>
-    <form id="settingsForm">
-      <div class="form-group">
-        <label for="username">اسم المستخدم:</label>
-        <input type="text" id="username" required>
+  <!-- رأس الصفحة مع معلومات المستخدم وXP والمستوى -->
+  <header class="header">
+    <div class="user-info">
+      <div class="user-badge">
+        <i class="fas fa-user"></i>
+        <span id="displayUsername">مستخدم</span>
+        <button id="backToHomeBtn" class="btn btn-primary">الصفحة الرئيسية</button>
       </div>
-      <button type="submit">التالي</button>
-    </form>
-  </div>
+      <div class="xp-level-container">
+        <div class="xp-badge">
+          <i class="fas fa-star"></i>
+          <span id="xpDisplay">0</span>
+        </div>
+        <div class="level-badge">
+          <i class="fas fa-trophy"></i>
+          <span id="levelDisplay">1</span>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- صفحة اختيار الفئة -->
   <div id="categories-container" style="display:none;">
-    <h2>أهلاً <span id="displayUsername"></span></h2>
+    <h2>أهلاً <span id="displayUsernameClone"></span></h2>
     <h3>اختر الفئة</h3>
     <div class="category-container">
       <div class="category-box" data-category="games">

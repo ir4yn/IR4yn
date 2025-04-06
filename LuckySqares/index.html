@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مربعات الحظ</title>
-    <link rel="icon" type="image/png" href="./images/icon.png">
+    <link rel="icon" type="image/png" href="./images/icon.png" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css"
@@ -14,13 +14,27 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+
   </head>
   <body>
-    
     <div id="lobby">
       <h1>مربعات الحظ</h1>
-      <h5>اختر رقم البداية من الاعدادات ثم ضع اسماء اللاعبين</h5>
+      <h5>اختر رقم البداية ثم ضع أسماء اللاعبين</h5>
+      <div class="lobby-settings">
+        <label for="initialScoreSelect"> </label>
+        <select id="initialScoreSelect">
+          <option value="">-- اختر البداية --</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="150">150</option>
+          <option value="200">200</option>
+          <option value="250">250</option>
+        </select>
+      </div>
       <div class="lobby-inputs">
         <div class="lobby-team">
           <label for="team1Players">التيم الاحمر</label>
@@ -32,41 +46,33 @@
         </div>
       </div>
       <button id="startGameBtn">ابدأ اللعبة</button>
-      <button id="lobbySettingsBtn">الاعدادات</button>
-      <div id="lobbySettingsDropdown" style="display: none;">
-        <button id="lobbySelectScoreBtn">اختيار البداية</button>
-        <div id="lobbyScoreOptions" style="display: none;">
-          <button class="scoreOption" data-score="50">50</button>
-          <button class="scoreOption" data-score="100">100</button>
-          <button class="scoreOption" data-score="150">150</button>
-          <button class="scoreOption" data-score="200">200</button>
-          <button class="scoreOption" data-score="250">250</button>
-        </div>
-      </div>
     </div>
 
-  
     <div id="gameArea" style="display: none;">
+      <button id="editTeamsBtn" style="position: absolute; top: 10px; right: 10px; z-index: 15000;">
+        تعديل الفرق
+      </button>
       <div id="scoreboard">
         <div id="team1Box" class="team-box team1">
           <div class="team-name">احمر</div>
-          <div id="team1Score" class="team-score">300</div>
+          <div id="team1Score" class="team-score">0</div>
           <div class="player-list" id="team1PlayerList"></div>
         </div>
         <div id="team2Box" class="team-box team2">
           <div class="team-name">ازرق</div>
-          <div id="team2Score" class="team-score">300</div>
+          <div id="team2Score" class="team-score">0</div>
           <div class="player-list" id="team2PlayerList"></div>
         </div>
       </div>
       <div id="turn">
         <span id="currentTurn">دور اللاعب</span>
       </div>
+      <!-- سجل اللعب -->
+      <div id="playHistory"></div>
       <div class="grid-container"></div>
     </div>
 
-    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <script src="script.js"></script>
   </body>
 </html>

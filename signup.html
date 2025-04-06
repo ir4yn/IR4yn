@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إنشاء حساب</title>
+  <link rel="icon" type="image/png" href="./images/icon.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="js/firebaseConfig.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>إنشاء حساب جديد</h2>
+    <form id="signup-form">
+      <input type="text" id="username" placeholder=" اسم المستخدم" required>
+      <input type="password" id="password" placeholder="كلمة المرور +6 " required>
+      <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور" required>
+      <button type="submit" id="signup-btn">إنشاء الحساب</button>
+      <div id="error-message" class="ERROR"></div>
+    </form>
+    <p class="auth-link">عندك حساب؟ <a href="login.html">تسجيل الدخول</a></p>
+  </div>
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const usernameRegex = /^[A-Za-z0-9]{4,}$/;
+      if (!usernameRegex.test(username)) {
+        showError('error');
+        return;
+      }
+      if (password !== confirmPassword) {
+        showError('كلمة المرور غير متطابقة');
+        return;
+      }
+      const email = username.toLowerCase() + "@rayngames.com";
+      try {
+        const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        await firebase.database().ref('users/' + user.uid).set({
+          username: username
+        });
+        window.location.href = 'index.html';
+      } catch (error) {
+        handleAuthError(error);
+      }
+    });
+
+    function handleAuthError(error) {
+      const messages = {
+        'auth/email-already-in-use': 'اسم المستخدم مستخدم بالفعل',
+        'auth/weak-password': 'تاكد من الباسوورد حط 6 اراقم و حروف',
+        'auth/invalid-email': 'اسم مستخدم غير صالح',
+        'auth/operation-not-allowed': 'هذه العملية غير مسموحة'
+      };
+      showError(messages[error.code] || error.message);
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      setTimeout(() => errorDiv.textContent = '', 5000);
+    }
+  </script>
+</body>
+</html>

@@ -1,302 +1,331 @@
-:root {
-  --primary-gradient: linear-gradient(45deg, #0077b6, #00b4d8);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Tajawal', sans-serif;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-size: cover;
-}
-
-body {
-  position: relative;
-}
-
-.hero-section {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #0A192F, #1E3A5F);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed; 
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
-}
-
-.hero-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.762);
-  z-index: 1;
-}
-
-.hero-content {
-  position: absolute;
-  top: 60px; 
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  text-align: center;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.hero-content h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-  font-weight: 700;
-}
-
-#hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 1rem;
-}
-
-#hero-buttons button {
-  background: var(--primary-gradient);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  min-width: 150px;
-}
-
-#hero-buttons button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(45deg, #0096c7, #48cae4);
-}
-
-.slider-container {
-  position: absolute;
-  bottom: 150px; 
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 1000px;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  z-index: 2;
-}
-
-.slide {
-  position: relative;
-  min-width: 280px;
-  height: 200px;
-  margin: 0 15px;
-  border-radius: 15px;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-  cursor: pointer;
-  overflow: hidden;
-  border: 2px solid rgba(236, 168, 21, 0.1);
-  will-change: transform, opacity;
-}
-
-.slide::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.slide.active {
-  transform: scale(1.15);
-  opacity: 1;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  z-index: 3;
-  border-color: rgba(11, 105, 246, 0.3);
-}
-
-.slide.inactive {
-  opacity: 0.4;
-  transform: scale(0.85);
-}
-
-.slider-controls {
-  position: absolute;
-  bottom: 70px; 
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  display: flex;
-  gap: 15px;
-}
-
-.slider-btn {
-  background: rgba(0, 183, 255, 0.2);
-  border: none;
-  width: 50px;
-  height: 50px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  color: white;
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.slider-btn:hover {
-  background: rgba(0, 150, 255, 0.6);
-  transform: scale(1.1);
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.877);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.modal.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-content {
-  background: #ffffff27;
-  padding: 20px 30px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
-  position: relative;
-}
-
-.modal-content h2 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: #ffffff;
-}
-
-.modal-content p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #ffffff;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #999;
-}
-
-.version-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 1rem;
-}
-
-.version-btn {
-  background: var(--primary-gradient);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  min-width: 150px;
-}
-
-.version-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(45deg, #0096c7, #48cae4);
-}
-
-@media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 2.5rem;
+/* ======================================
+   التنسيقات العامة لجميع الصفحات
+   ====================================== */
+   * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Tajawal', sans-serif;
   }
-  .slide {
-    min-width: 220px;
-    height: 160px;
+  
+  body {
+    background: #1a1a2e;
+    color: #fff;
+    line-height: 1.6;
+    min-height: 100vh;
   }
-  #hero-buttons button, .version-btn {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+  
+  /* ======================================
+     تنسيقات الرسائل والأخطاء
+     ====================================== */
+  .error {
+    color: rgb(224, 37, 37);
+    margin-top: 10px;
+    text-align: center;
   }
-  .slider-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
-  .slider-container {
-    bottom: 120px;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-content {
-    top: 40px;
-    padding: 0 10px;
-  }
-  .hero-content h1 {
+  
+  /* ======================================
+     تنسيقات الهامبرغر والقائمة الجانبية
+     ====================================== */
+  #hamburger {
+    position: fixed;
+    top: 10px;
+    left: 10px;
     font-size: 2rem;
+    cursor: pointer;
+    z-index: 1100;
   }
-  #hero-buttons button, .version-btn {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background: #162447;
+    padding: 1rem;
+    transition: left 0.3s ease;
+    z-index: 1100;
   }
+  
+  .sidebar.show {
+    left: 0;
+  }
+  
+  .close-sidebar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  
+  .sidebar h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .sidebar p {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .sidebar button {
+    width: 100%;
+    padding: 10px;
+    background: #e94560;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .sidebar button:hover {
+    background: #ff6b6b;
+  }
+  
+  /* ======================================
+     تنسيقات الهيدر والصفحة الرئيسية (hero)
+     ====================================== */
+  .hero-section {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.936); /* تعديل: جعل الـ overlay أكثر شفافية */
+    z-index: 1;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding-top: 30vh;
+  }
+  
+  #hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  .version-btn{
+    background: #162447;
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0 1rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+ 
+  /* أزرار اللعب والمعلومات */
+  #hero-buttons button {
+    background: #162447;
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0 1rem;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  #hero-buttons button:hover {
+    background: #e94560;
+    transform: translateY(-2px);
+  }
+  
+  /* ======================================
+     تنسيقات السلايدر
+     ====================================== */
+  .slider-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
   .slide {
-    min-width: 200px;
-    height: 140px;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
   }
+  
+  .slide.active {
+    opacity: 1;
+  }
+  
+  /* عناصر التحكم بالسلايدر */
   .slider-controls {
-    bottom: 50px;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
   }
-}
+  
+  .slider-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 15px 30px; /* تعديل: زيادة الـ padding لتكبير الأزرار */
+    margin: 0 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1.5rem; /* تعديل: زيادة حجم الخط لتكبير الأزرار */
+  }
+  
+  .slider-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+  
+  /* ======================================
+     النوافذ المنبثقة (المودال)
+     ====================================== */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+  }
+  
+  .modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: #162447;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  
+  /* ======================================
+     تنسيقات صفحات التسجيل والدخول
+     ====================================== */
+  .auth-container {
+    max-width: 400px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .auth-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .auth-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .auth-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 1rem;
+    background: #e94560;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .auth-container button:hover {
+    background: #ff6b6b;
+  }
+  
+  .auth-container p {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  
+  .auth-container a {
+    color: #e94560;
+    text-decoration: none;
+  }
+  
+  /* ======================================
+     تنسيقات متجاوبة للجوال
+     ====================================== */
+  @media (max-width: 768px) {
+    #hero-title {
+      font-size: 2.5rem;
+    }
+  
+    #hero-buttons button {
+      display: block;
+      width: 80%;
+      margin: 1rem auto;
+    }
+  
+    .slider-controls {
+      bottom: 10px;
+    }
+  
+    .auth-container {
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    #hero-title {
+      font-size: 2rem;
+    }
+  
+    .modal-content {
+      padding: 1.5rem;
+    }
+  
+    .auth-container {
+      padding: 1rem;
+    }
+  }

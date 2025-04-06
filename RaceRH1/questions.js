@@ -1212,7 +1212,7 @@ const hardcodedQuestions = {
     image: ""
   },
   "q41": {
-    text: "خمن التلميح المشترك بين (مطرقة + مفك + مسخمنر)؟",
+    text: "خمن التلميح المشترك بين (مطرقة + مفك + تصليح)؟",
     answer: " سباكة",
     image: ""
   },
@@ -2290,7 +2290,7 @@ const hardcodedQuestions = {
     },
     "q18": {
       text: "من اليسار لليمين*اضغط على الصورة*",
-      answer: "من + ام = منام",
+      answer: "من + امه = منامه",
       image: "./images/18.jpg"
     },
     "q19": {
@@ -2318,11 +2318,7 @@ const hardcodedQuestions = {
       answer: "من + صور = منصور",
       image: "./images/23.jpg"
     },
-    "q24": {
-      text: "من اليسار لليمين*اضغط على الصورة*",
-      answer: "سيف + ناب = سفن اب",
-      image: "./images/24.jpg"
-    },
+  
 
   },
 }

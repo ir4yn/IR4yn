@@ -5,176 +5,132 @@ let wrongLetters = [];
 let remainingAttempts = 0;
 let currentCategory = "";
 let username = "";
-let attemptsLobby = 5; // ثابت 5 محاولات
-let hintUsed = false;  // للتحقق من استخدام التلميح
+let attemptsLobby = 5;
+let hintUsed = false;
+let gameProgressMade = false;
+let wordUsed = false;
+let retryUsed = false;
+let userXP = 0;
+let userLevel = 1;
 
-// تحميل الكلمات من ملف JSON
 fetch('words.json')
-  .then(response => response.json())
-  .then(data => {
-    words = data;
-    updateCategoryCounts();
-  })
-  .catch(error => console.error('خطأ في تحميل الكلمات:', error));
+  .then(r => r.json())
+  .then(d => words = d);
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    const ref = firebase.database().ref('users/' + user.uid);
+    ref.once('value').then(s => {
+      const u = s.exists() ? s.val() : {};
+      username = u.username || (user.email ? user.email.split('@')[0] : "مستخدم");
+      userXP = u.xp || 0;
+      userLevel = u.level || 1;
+      document.getElementById("displayUsername").innerText = username;
+      updateXPDisplay();
+      document.getElementById("categories-container").style.display = "block";
+      updateCategoryCounts();
+      loadGameStateFirebase();
+    });
+  } else {
+    window.location.href = "/login.html";
+  }
+});
+
+function updateXPDisplay() {
+  document.getElementById("xpDisplay").innerText = userXP;
+  document.getElementById("levelDisplay").innerText = userLevel;
+}
+
+function updateUserDataInFirebase() {
+  const uid = firebase.auth().currentUser.uid;
+  firebase.database().ref('users/' + uid).update({ xp: userXP, level: userLevel });
+}
+
+function updateLevel() {
+  userLevel = Math.floor(userXP / 100) + 1;
+  updateXPDisplay();
+  updateUserDataInFirebase();
+}
 
 function loadUsedWords(user) {
-  const key = "usedWords_" + user;
-  const stored = localStorage.getItem(key);
-  if (stored) {
-    return JSON.parse(stored);
-  } else {
-    return { games: [], countries: [], names: [], foods: [], movies: [], cities: [], animals: [], sports: [], songs: [] };
-  }
-}
-
-function saveUsedWords(user, usedWords) {
-  const key = "usedWords_" + user;
-  localStorage.setItem(key, JSON.stringify(usedWords));
-}
-
-function normalizeLetter(letter) {
-  return letter.replace(/[أإآ]/g, "ا");
-}
-
-function alreadyGuessed(letter) {
-  const normalizedInput = normalizeLetter(letter);
-  for (const char of displayedWord) {
-    if (char !== "_" && normalizeLetter(char) === normalizedInput) {
-      return true;
-    }
-  }
-  for (const char of wrongLetters) {
-    if (normalizeLetter(char) === normalizedInput) {
-      return true;
-    }
-  }
-  return false;
-}
-
-document.getElementById("settingsForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  username = document.getElementById("username").value.trim();
-  if (username === "") {
-    alert("يرجى إدخال اسم المستخدم.");
-    return;
-  }
-  // يتم تعيين عدد المحاولات 5 دائماً واللعب بدون وقت
-  document.getElementById("displayUsername").innerText = username;
-  document.getElementById("categories-container").style.display = "block";
-  document.getElementById("settings-container").style.display = "none";
-  updateCategoryCounts();
-});
-
-document.querySelectorAll('.category-box').forEach(box => {
-  box.addEventListener('click', function() {
-    document.querySelectorAll('.category-box').forEach(b => b.classList.remove('selected'));
-    this.classList.add('selected');
+  return firebase.database().ref('users/' + user + '/usedWords').once('value').then(s => {
+    const uw = s.val() || {};
+    ['games','countries','names','foods','movies','cities','animals','sports','songs'].forEach(c => {
+      if (!uw[c]) uw[c] = [];
+    });
+    return uw;
   });
-});
+}
 
-document.getElementById("startGameBtn").addEventListener("click", function() {
-  let selectedCategoryBox = document.querySelector('.category-box.selected');
-  if (!selectedCategoryBox) {
-    alert("اختر الفئة !!!!!!!!");
-    return;
-  }
-  currentCategory = selectedCategoryBox.getAttribute("data-category");
-  
-  // التحقق من عدد الكلمات المتبقية في الفئة
-  let remainingCount = parseInt(selectedCategoryBox.querySelector(".remaining-count").innerText);
-  if(remainingCount <= 0){
-    alert("قريبا");
-    return;
-  }
-  
-  document.getElementById("gameTitle").innerText = selectedCategoryBox.querySelector("span").innerText;
-  document.getElementById("categories-container").style.display = "none";
-  document.getElementById("game-container").style.display = "block";
-  startGame();
-});
+function saveUsedWords(user, uw) {
+  firebase.database().ref('users/' + user + '/usedWords').set(uw);
+}
 
-document.getElementById("backToCategoriesBtn").addEventListener("click", function() {
-  document.getElementById("game-container").style.display = "none";
-  document.getElementById("backBtn").style.display = "none";
-  document.getElementById("nextWordBtn").style.display = "none";
-  document.getElementById("retryBtn").style.display = "none";
-  document.getElementById("showAnswerBtn").style.display = "none";
-  document.getElementById("message").innerText = "";
-  document.getElementById("categories-container").style.display = "block";
-  updateCategoryCounts();
-});
+function normalizeLetter(l) {
+  return l.replace(/[أإآ]/g, "ا");
+}
 
-document.getElementById("nextWordBtn").addEventListener("click", function() {
-  document.getElementById("nextWordBtn").style.display = "none";
-  document.getElementById("backBtn").style.display = "none";
-  document.getElementById("message").innerText = "";
-
-  const hintBtn = document.getElementById("hintBtn");
-  hintBtn.disabled = false;
-  hintBtn.style.backgroundColor = "";
-  
-  startGame();
-});
+function alreadyGuessed(l) {
+  const ni = normalizeLetter(l);
+  return displayedWord.some(c => c !== "_" && normalizeLetter(c) === ni) ||
+         wrongLetters.some(c => normalizeLetter(c) === ni);
+}
 
 function updateCategoryCounts() {
-  if (!words || Object.keys(words).length === 0) return;
-  document.querySelectorAll('.category-box').forEach(box => {
-    let category = box.getAttribute("data-category");
-    let total = words[category] ? words[category].length : 0;
-    let usedWords = loadUsedWords(username);
-    let usedCount = usedWords[category] ? usedWords[category].length : 0;
-    let remaining = total - usedCount;
-    let smallElem = box.querySelector(".remaining-count");
-    if (smallElem) {
-      smallElem.innerText = remaining;
+  if (!words || !Object.keys(words).length) return;
+  loadUsedWords(firebase.auth().currentUser.uid).then(uw => {
+    document.querySelectorAll('.category-box').forEach(box => {
+      const cat = box.getAttribute("data-category");
+      const total = words[cat]?.length || 0;
+      const used = (uw[cat] || []).length;
+      box.querySelector(".remaining-count").innerText = total - used;
+    });
+  });
+}
+
+function markWordUsed() {
+  if (wordUsed) return;
+  wordUsed = true;
+  loadUsedWords(firebase.auth().currentUser.uid).then(uw => {
+    if (!uw[currentCategory].includes(secretWord)) {
+      uw[currentCategory].push(secretWord);
+      saveUsedWords(firebase.auth().currentUser.uid, uw);
+      const total = words[currentCategory]?.length || 0;
+      document.getElementById("remainingQuestions").innerText = "باقي " + (total - uw[currentCategory].length);
     }
   });
 }
 
-document.getElementById("backBtn").addEventListener("click", function() {
-  document.getElementById("game-container").style.display = "none";
-  document.getElementById("backBtn").style.display = "none";
-  document.getElementById("nextWordBtn").style.display = "none";
-  document.getElementById("retryBtn").style.display = "none";
-  document.getElementById("showAnswerBtn").style.display = "none";
-  document.getElementById("message").innerText = "";
-  document.getElementById("categories-container").style.display = "block";
-  updateCategoryCounts();
-});
-
 function startGame() {
-  // عند اختيار فئة معينة
-  if (Object.keys(words).length === 0) {
+  if (!words[currentCategory]) {
     document.getElementById("message").innerText = "لم يتم تحميل الكلمات بعد، حاول مرة أخرى.";
     return;
   }
-  let usedWords = loadUsedWords(username);
-  let wordList = words[currentCategory];
-  let availableWords = wordList.filter(w => !usedWords[currentCategory].includes(w));
-  
-  if (availableWords.length === 0) {
-    usedWords[currentCategory] = [];
-    saveUsedWords(username, usedWords);
-    availableWords = wordList;
-    document.getElementById("message").innerText = "لقد انتهت الكلمات، تم إعادة تعيين الكلمات.";
-  }
-  
-  secretWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-  usedWords[currentCategory].push(secretWord);
-  saveUsedWords(username, usedWords);
-  let remainingQuestions = wordList.length - usedWords[currentCategory].length;
-  document.getElementById("remainingQuestions").innerText = "باقي " + remainingQuestions;
-  
-  initializeGame();
+  loadUsedWords(firebase.auth().currentUser.uid).then(uw => {
+    const list = words[currentCategory];
+    const avail = list.filter(w => !uw[currentCategory]?.includes(w));
+    if (!avail.length) {
+      alert("انتهت كلمات هذه الفئة!");
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("categories-container").style.display = "block";
+      updateCategoryCounts();
+      return;
+    }
+    secretWord = avail[Math.floor(Math.random() * avail.length)];
+    document.getElementById("remainingQuestions").innerText =
+      "باقي " + (list.length - (uw[currentCategory]?.length || 0));
+    initializeGame();
+  });
 }
 
 function initializeGame() {
-  // إعادة تعيين المتغيرات لكل جولة جديدة
   hintUsed = false;
-  displayedWord = secretWord.split("").map(char => char === " " ? " " : "_");
+  gameProgressMade = false;
+  wordUsed = false;
+  retryUsed = false;
+  displayedWord = secretWord.split("").map(c => c === " " ? " " : "_");
   wrongLetters = [];
   remainingAttempts = attemptsLobby;
-  
   document.getElementById("letterInput").disabled = false;
   document.getElementById("guessBtn").disabled = false;
   document.getElementById("retryBtn").style.display = "none";
@@ -182,19 +138,20 @@ function initializeGame() {
   document.getElementById("nextWordBtn").style.display = "none";
   document.getElementById("message").innerText = "";
   document.getElementById("hintBtn").disabled = false;
-  
+  document.getElementById("hintBtn").style.backgroundColor = "";
   updateDisplay();
+  saveGameStateFirebase();
 }
 
 function updateDisplay() {
   document.getElementById("wordDisplay").innerText = displayedWord.join(" ");
-  let container = document.getElementById("wrongLettersContainer");
-  container.innerHTML = "";
-  wrongLetters.forEach(letter => {
-    let span = document.createElement("span");
-    span.className = "wrong-letter-box";
-    span.innerText = letter;
-    container.appendChild(span);
+  const c = document.getElementById("wrongLettersContainer");
+  c.innerHTML = "";
+  wrongLetters.forEach(l => {
+    const s = document.createElement("span");
+    s.className = "wrong-letter-box";
+    s.innerText = l;
+    c.appendChild(s);
   });
   document.getElementById("remainingAttempts").innerText = remainingAttempts;
 }
@@ -206,83 +163,212 @@ function disableInput() {
 
 function guessLetter() {
   const input = document.getElementById("letterInput");
-  let letter = input.value;
+  const letter = input.value.trim();
   input.value = "";
-  if (!letter) return;
-  letter = letter.trim();
-  if (!/^[\u0621-\u064A]$/.test(letter)) {
-    document.getElementById("message").innerText = "";
-    return;
+  if (!letter || !/^[\u0621-\u064A]$/.test(letter)) return;
+  if (!gameProgressMade) {
+    gameProgressMade = true;
+    markWordUsed();
   }
   if (alreadyGuessed(letter)) {
     document.getElementById("message").innerText = "لقد اخترت هذا الحرف من قبل.";
     return;
   }
-  let correctGuess = false;
+  let correct = false;
   for (let i = 0; i < secretWord.length; i++) {
     if (normalizeLetter(secretWord[i]) === normalizeLetter(letter)) {
       displayedWord[i] = secretWord[i];
-      correctGuess = true;
+      correct = true;
     }
   }
-  if (!correctGuess) {
+  if (!correct) {
     wrongLetters.push(letter);
     remainingAttempts--;
   }
   updateDisplay();
-  
+  saveGameStateFirebase();
   if (!displayedWord.includes("_")) {
-    // اللاعب فاز، نعرض الكلمة الكاملة
     document.getElementById("wordDisplay").innerText = secretWord;
-    
-    // قائمة برسائل احتفالية متنوعة
-    const winMessages = [
-      "صح يامجنوووووووووون",
-      " يا اسطوووووورة",
-      "ياااا قوووووتك",
-      " انت كيييييييف",
-      "استمر",
-      "ياسلاااااام",
-      "احسنت",
-      "وااااااااااو",
-      " يافنااااان",
-      " ماشاءالله عليييك",
-      "استمرر يابطل",
-      "مجنوووووووون",
-      "  يااا قوييييي",
-      " يالعيييييييييييب"
-    ];
-    // اختيار رسالة عشوائية
-    const randomMessage = winMessages[Math.floor(Math.random() * winMessages.length)];
-    document.getElementById("message").innerText = randomMessage;
-    
+    const msgs = ["صح يامجنوووووووووون","يا اسطوووووورة","ياااا قوووووتك","انت كيييييييف","استمر","ياسلاااااام","احسنت","وااااااااااو","يافنااااان","ماشاءالله عليييك","استمرر يابطل","مجنوووووووون","يااا قوييييي","يالعيييييييييييب"];
+    document.getElementById("message").innerText = msgs[Math.floor(Math.random()*msgs.length)];
     disableInput();
     document.getElementById("nextWordBtn").style.display = "block";
     document.getElementById("backBtn").style.display = "block";
-    
-    // تشغيل احتفالية قصاصات باستخدام مكتبة canvas-confetti
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    confetti({ particleCount:200, spread:70, origin:{x:0.5,y:0.8} });
+    gameProgressMade = false;
+    let xp = 0, m = wrongLetters.length;
+    if (!retryUsed) {
+      xp = m === 0 ? 100 : m === 1 ? 90 : m === 2 ? 80 : m === 3 ? 70 : m === 4 ? 60 : 50;
+    } else {
+      xp = m === 0 ? 50 : m === 1 ? 40 : m === 2 ? 30 : m === 3 ? 20 : m === 4 ? 10 : 5;
+    }
+    userXP += xp;
+    updateLevel();
+    document.getElementById("message").innerHTML += '<br><span class="xp-message">حصلت على ' + xp + ' <i class="fas fa-star"></i></span>';
+    saveGameStateFirebase();
   } else if (remainingAttempts <= 0) {
     document.getElementById("message").innerText = "انتهت المحاولات!";
     disableInput();
     document.getElementById("retryBtn").style.display = "block";
     document.getElementById("showAnswerBtn").style.display = "block";
+    saveGameStateFirebase();
   }
 }
 
+function saveGameStateFirebase() {
+  const state = {
+    secretWord,
+    displayedWord,
+    wrongLetters,
+    remainingAttempts,
+    currentCategory,
+    hintUsed,
+    gameProgressMade,
+    wordUsed,
+    retryUsed,
+    userXP,
+    userLevel
+  };
+  const uid = firebase.auth().currentUser.uid;
+  firebase.database().ref('users/' + uid + '/gameState').set(state);
+}
 
-document.getElementById("guessBtn").addEventListener("click", guessLetter);
-document.getElementById("letterInput").addEventListener("keyup", function(event) {
-  if (event.key === "Enter") {
-    guessLetter();
+function loadGameStateFirebase() {
+  const uid = firebase.auth().currentUser.uid;
+  firebase.database().ref('users/' + uid + '/gameState').once('value').then(snapshot => {
+    const state = snapshot.val();
+    if (state) {
+      secretWord = state.secretWord || "";
+      displayedWord = state.displayedWord || [];
+      wrongLetters = state.wrongLetters || [];
+      remainingAttempts = state.remainingAttempts || attemptsLobby;
+      currentCategory = state.currentCategory || "";
+      hintUsed = state.hintUsed || false;
+      gameProgressMade = state.gameProgressMade || false;
+      wordUsed = state.wordUsed || false;
+      retryUsed = state.retryUsed || false;
+      userXP = state.userXP || 0;
+      userLevel = state.userLevel || 1;
+      updateDisplay();
+      updateXPDisplay();
+      if (gameProgressMade && currentCategory) {
+        document.getElementById("game-container").style.display = "block";
+        document.getElementById("categories-container").style.display = "none";
+        const categoryBox = document.querySelector(`.category-box[data-category="${currentCategory}"]`);
+        if (categoryBox) {
+          document.getElementById("gameTitle").innerText = categoryBox.querySelector("span").innerText;
+        }
+      } else {
+        document.getElementById("game-container").style.display = "none";
+        document.getElementById("categories-container").style.display = "block";
+      }
+      if (remainingAttempts > 0) {
+        document.getElementById("letterInput").disabled = false;
+        document.getElementById("guessBtn").disabled = false;
+      }
+    }
+  });
+}
+
+
+
+
+document.getElementById('backToHomeBtn').addEventListener('click', () => {
+  if(gameProgressMade){ 
+    alert("يوجد لديك كلمة لم تكملها، يرجى إنهاءها أولاً.");
+    document.getElementById("game-container").style.display = "block";
+    document.getElementById("categories-container").style.display = "none";
+    return; 
   }
+  window.location.href = "../index.html";
 });
 
-document.getElementById("retryBtn").addEventListener("click", function() {
+document.querySelectorAll('.category-box').forEach(b => b.addEventListener('click', function(){
+  document.querySelectorAll('.category-box').forEach(x => x.classList.remove('selected'));
+  this.classList.add('selected');
+}));
+
+document.getElementById("startGameBtn").addEventListener("click", () => {
+  if(gameProgressMade){ 
+    alert("يوجد لديك كلمة غير مكتملة، يرجى الانتهاء منها أولاً.");
+    document.getElementById("game-container").style.display = "block";
+    document.getElementById("categories-container").style.display = "none";
+    return; 
+  }
+  const sel = document.querySelector('.category-box.selected');
+  if(!sel){ 
+    alert("اختر الفئة !!!!!!!!"); 
+    return; 
+  }
+  currentCategory = sel.getAttribute("data-category");
+  const rem = parseInt(sel.querySelector(".remaining-count").innerText);
+  if(rem <= 0){ 
+    alert("قريبا"); 
+    return; 
+  }
+  document.getElementById("gameTitle").innerText = sel.querySelector("span").innerText;
+  document.getElementById("categories-container").style.display = "none";
+  document.getElementById("game-container").style.display = "block";
+  startGame();
+});
+
+document.getElementById("backToCategoriesBtn").addEventListener("click", () => {
+  if(gameProgressMade){ 
+    alert("يوجد لديك كلمة غير مكتملة، يرجى إنهاءها أولاً.");
+    document.getElementById("game-container").style.display = "block";
+    document.getElementById("categories-container").style.display = "none";
+    return; 
+  }
+  document.getElementById("game-container").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+  document.getElementById("nextWordBtn").style.display = "none";
+  document.getElementById("retryBtn").style.display = "none";
+  document.getElementById("showAnswerBtn").style.display = "none";
+  document.getElementById("message").innerText = "";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
+});
+
+document.getElementById("nextWordBtn").addEventListener("click", () => {
+  document.getElementById("nextWordBtn").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+  document.getElementById("message").innerText = "";
+  gameProgressMade = false; 
+  hintUsed = false; 
+  wordUsed = false; 
+  retryUsed = false;
+  document.getElementById("hintBtn").disabled = false;
+  document.getElementById("hintBtn").style.backgroundColor = "";
+  startGame();
+});
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  if(gameProgressMade){ 
+    alert("يوجد لديك كلمة غير مكتملة، يرجى إنهاءها أولاً.");
+    document.getElementById("game-container").style.display = "block";
+    document.getElementById("categories-container").style.display = "none";
+    return; 
+  }
+  document.getElementById("game-container").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+  document.getElementById("nextWordBtn").style.display = "none";
+  document.getElementById("retryBtn").style.display = "none";
+  document.getElementById("showAnswerBtn").style.display = "none";
+  document.getElementById("message").innerText = "";
+  document.getElementById("categories-container").style.display = "block";
+  updateCategoryCounts();
+});
+
+document.getElementById("guessBtn").addEventListener("click", guessLetter);
+document.getElementById("letterInput").addEventListener("keyup", e => { if(e.key === "Enter") guessLetter(); });
+
+document.getElementById("retryBtn").addEventListener("click", () => {
+  if (retryUsed) {
+    document.getElementById("retryBtn").style.display = "none";
+    document.getElementById("message").innerText = "بسسس خلاص";
+    return;
+  }
+  retryUsed = true;
   document.getElementById("retryBtn").style.display = "none";
   document.getElementById("showAnswerBtn").style.display = "none";
   remainingAttempts = attemptsLobby;
@@ -290,45 +376,49 @@ document.getElementById("retryBtn").addEventListener("click", function() {
   document.getElementById("guessBtn").disabled = false;
   document.getElementById("message").innerText = "";
   updateDisplay();
+  saveGameStateFirebase();
 });
 
-document.getElementById("showAnswerBtn").addEventListener("click", function() {
-  document.getElementById("retryBtn").style.display = "none";
-  document.getElementById("showAnswerBtn").style.display = "none";
+document.getElementById("showAnswerBtn").addEventListener("click", () => {
   displayedWord = secretWord.split("");
   document.getElementById("wordDisplay").innerText = displayedWord.join(" ");
   document.getElementById("message").innerText = "الكلمة الصحيحة هي: " + secretWord;
   disableInput();
   document.getElementById("nextWordBtn").style.display = "block";
+  gameProgressMade = false;
+  saveGameStateFirebase();
 });
 
-document.getElementById("hintBtn").addEventListener("click", function() {
-  if (hintUsed) {
-    document.getElementById("message").innerText = "لقد استخدمت التلميح بالفعل.";
-    return;
-  }
-  // تغيير لون زر التلميح ليبدو أنه مستعمل
-  this.style.backgroundColor = "gray"; // اختر اللون الذي تفضله
-
-  // إيجاد الفهارس التي لا يزال فيها "_" في الكلمة المعروضة
-  const hiddenIndexes = [];
-  displayedWord.forEach((char, index) => {
-    if (char === "_") hiddenIndexes.push(index);
+if(document.getElementById("logoutBtn")){
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    if(gameProgressMade){ 
+      alert("لقد بدأت اللعب في الفئة " + currentCategory + "، يجب إنهاء الكلمة الحالية قبل تسجيل الخروج.");
+      document.getElementById("game-container").style.display = "block";
+      document.getElementById("categories-container").style.display = "none";
+      return; 
+    }
+    firebase.auth().signOut().then(() => window.location.href = "/login.html");
   });
-  if (hiddenIndexes.length === 0) return;
-  
-  const randomIndex = hiddenIndexes[Math.floor(Math.random() * hiddenIndexes.length)];
-  
-  // عرض الحرف مؤقتاً دون تغييره في المتغير الأصلي
-  const tempDisplay = displayedWord.slice();
-  tempDisplay[randomIndex] = secretWord[randomIndex];
-  document.getElementById("wordDisplay").innerText = tempDisplay.join(" ");
-  
-  hintUsed = true;
-  document.getElementById("hintBtn").disabled = true;
-  
-  setTimeout(() => {
-    document.getElementById("wordDisplay").innerText = displayedWord.join(" ");
-  }, 1000);
-});
+}
 
+document.getElementById("hintBtn").addEventListener("click", function(){
+  if(hintUsed){ 
+    document.getElementById("message").innerText = "لقد استخدمت التلميح بالفعل."; 
+    return; 
+  }
+  if(!gameProgressMade){ 
+    gameProgressMade = true; 
+    markWordUsed(); 
+  }
+  this.style.backgroundColor = "gray";
+  const hi = displayedWord.reduce((a, c, i) => (c === "_" ? a.concat(i) : a), []);
+  if(!hi.length) return;
+  const ri = hi[Math.floor(Math.random() * hi.length)];
+  const td = displayedWord.slice();
+  td[ri] = secretWord[ri];
+  document.getElementById("wordDisplay").innerText = td.join(" ");
+  hintUsed = true;
+  this.disabled = true;
+  setTimeout(() => document.getElementById("wordDisplay").innerText = displayedWord.join(" "), 1000);
+  saveGameStateFirebase();
+});

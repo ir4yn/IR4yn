@@ -18,6 +18,108 @@ body {
 
 
 
+.header {
+    background: linear-gradient(135deg, #2c3e5000, #3498db00);
+    padding: 5px 15px;
+    border-radius: 15px;
+    margin: 10px auto;
+    max-width: 900px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .user-badge {
+    background: rgba(255, 255, 255, 0.045);
+    padding: 12px 25px;
+    border-radius: 30px;
+    border: 0px solid #f1c40f;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    color: #cccfe2;
+    transition: all 0.3s ease;
+  }
+  
+  .user-badge i {
+    font-size: 1.4em;
+    color: #cccfe2;
+  }
+  
+  .xp-level-container {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .xp-badge, .level-badge {
+    padding: 12px 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .xp-badge {
+    background: linear-gradient(45deg, #2ecc7000, #27ae5f00);
+    border: 0px solid #2ecc71;
+    color: #fff;
+  }
+  
+  .level-badge {
+    background: linear-gradient(45deg, #3498db00, #297fb900);
+    border: 0px solid #3498db;
+    color: #fff;
+  }
+  
+  .xp-badge i {
+    color: #f1c40f;
+    animation: pulse 2s infinite;
+  }
+  
+  .level-badge i {
+    color: #f1c40f;
+    animation: rotate 3s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes rotate {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
+  
+  @media (max-width: 600px) {
+    .user-info {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .user-badge, .xp-badge, .level-badge {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 15px;
+    }
+    
+    .user-badge i, .xp-badge i, .level-badge i {
+      font-size: 1.2em;
+    }
+  }
+
+
 /* صفحة الإعدادات */
 #settings-container {
     background: rgba(44, 62, 80, 0.95);
@@ -28,6 +130,10 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
+.xp-message {
+    font-size: 0.5em; 
+    color: rgb(255, 213, 0);
+}
 
 #username {
     width: 200px;
@@ -352,6 +458,10 @@ button:hover {
     background: #1F618D;
     transform: scale(1.05);
 }
+.btn-primary {
+    background-color: #5a7dbf00; 
+    color: #9c9a9a; 
+  }
 
 @media (max-width: 600px) {
     #settings-container, #game-container {

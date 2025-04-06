@@ -4,43 +4,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const startGameBtn = document.getElementById("startGameBtn");
   const team1PlayersInput = document.getElementById("team1Players");
   const team2PlayersInput = document.getElementById("team2Players");
+  const initialScoreSelect = document.getElementById("initialScoreSelect");
+  const playHistory = document.getElementById("playHistory");
 
-  const lobbySettingsBtn = document.getElementById("lobbySettingsBtn");
-  const lobbySettingsDropdown = document.getElementById("lobbySettingsDropdown");
-  const lobbySelectScoreBtn = document.getElementById("lobbySelectScoreBtn");
-  const lobbyScoreOptions = document.getElementById("lobbyScoreOptions");
-
-  if (lobbySettingsBtn) {
-    lobbySettingsBtn.addEventListener("click", () => {
-      lobbySettingsDropdown.style.display =
-        lobbySettingsDropdown.style.display === "none" ||
-        lobbySettingsDropdown.style.display === ""
-          ? "block"
-          : "none";
-    });
-  }
-
-  if (lobbySelectScoreBtn) {
-    lobbySelectScoreBtn.addEventListener("click", () => {
-      lobbyScoreOptions.style.display =
-        lobbyScoreOptions.style.display === "none" ||
-        lobbyScoreOptions.style.display === ""
-          ? "flex"
-          : "none";
-    });
-  }
-
-  if (lobbyScoreOptions) {
-    lobbyScoreOptions.querySelectorAll(".scoreOption").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const score = e.target.getAttribute("data-score");
-        localStorage.setItem("initialScore", score);
-        location.reload();
-      });
-    });
-  }
+  playHistory.style.position = "fixed";
+  playHistory.style.top = "50%";
+  playHistory.style.left = "50%";
+  playHistory.style.transform = "translate(-50%, -50%)";
+  playHistory.style.width = "90%";
+  playHistory.style.maxWidth = "400px";
+  playHistory.style.maxHeight = "200px";
+  playHistory.style.overflowY = "auto";
+  playHistory.style.scrollbarWidth = "none";
+  playHistory.style.msOverflowStyle = "none";
+  const style = document.createElement("style");
+  style.innerHTML = `
+    #playHistory::-webkit-scrollbar {
+      display: none;
+    }
+  `;
+  document.head.appendChild(style);
+  playHistory.style.display = "flex";
+  playHistory.style.flexDirection = "column";
 
   startGameBtn.addEventListener("click", () => {
+    if (!initialScoreSelect.value) {
+      alert("يرجى اختيار البداية قبل إدخال أسماء اللاعبين");
+      return;
+    }
+    const initialScore = Number(initialScoreSelect.value);
     const team1Text = team1PlayersInput.value.trim();
     const team2Text = team2PlayersInput.value.trim();
 
@@ -63,12 +55,86 @@ document.addEventListener("DOMContentLoaded", () => {
     lobby.style.display = "none";
     gameArea.style.display = "block";
 
-    startGame();
+    startGame(initialScore);
   });
 
+  function updateLogEntryText(entry) {
+    const team = entry.dataset.team;
+    const playerIndex = entry.dataset.playerIndex;
+    const action = entry.dataset.action;
+    const points = entry.dataset.points;
+    let playerName =
+      team == 1 ? window.team1Players[playerIndex] : window.team2Players[playerIndex];
+    entry.textContent = `${playerName} ${action} ${points}`;
+    entry.style.color = team == 1 ? "#e74c3c" : "#3498db";
+  }
+  function logAction(team, playerIndex, action, points) {
+    const entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.dataset.team = team;
+    entry.dataset.playerIndex = playerIndex;
+    entry.dataset.action = action;
+    entry.dataset.points = points;
+    entry.style.fontSize = "0.8em";
+    entry.style.textAlign = "center";
+    entry.style.marginBottom = "5px";
+
+    updateLogEntryText(entry);
+    playHistory.appendChild(entry);
+
+    entry.style.opacity = "0";
+    entry.style.transform = "translateY(20px)";
+    setTimeout(() => {
+      entry.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+      entry.style.opacity = "1";
+      entry.style.transform = "translateY(0)";
+    }, 10);
+
+    playHistory.scrollTop = playHistory.scrollHeight;
+  }
+  function updatePlayHistory() {
+    const entries = document.querySelectorAll("#playHistory .log-entry");
+    entries.forEach((entry) => {
+      updateLogEntryText(entry);
+    });
+  }
+
+  function updatePlayerLists() {
+    const team1PlayerListEl = document.getElementById("team1PlayerList");
+    const team2PlayerListEl = document.getElementById("team2PlayerList");
+    team1PlayerListEl.innerHTML = "";
+    team2PlayerListEl.innerHTML = "";
+    window.team1Players.forEach((player, index) => {
+      const span = document.createElement("span");
+      span.textContent = player;
+      span.style.display = "block";
+      if (
+        index === window.gameState.team1Index &&
+        window.gameState.currentTeam === 1
+      ) {
+        span.style.fontWeight = "bold";
+        span.style.color = "#e74c3c";
+      }
+      team1PlayerListEl.appendChild(span);
+    });
+    window.team2Players.forEach((player, index) => {
+      const span = document.createElement("span");
+      span.textContent = player;
+      span.style.display = "block";
+      if (
+        index === window.gameState.team2Index &&
+        window.gameState.currentTeam === 2
+      ) {
+        span.style.fontWeight = "bold";
+        span.style.color = "#3498db";
+      }
+      team2PlayerListEl.appendChild(span);
+    });
+    updatePlayHistory();
+  }
 
   function runConfetti() {
-    const duration = 10 * 1000; // مدة التأثير 30 ثانية
+    const duration = 10 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = {
       startVelocity: 30,
@@ -81,35 +147,44 @@ document.addEventListener("DOMContentLoaded", () => {
       return Math.random() * (max - min) + min;
     }
 
-    const interval = setInterval(function() {
+    const interval = setInterval(function () {
       const timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) {
         clearInterval(interval);
         return;
       }
       const particleCount = 50 * (timeLeft / duration);
-      // إطلاق القصاصات من جهتين
-      confetti(Object.assign({}, defaults, {
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-      }));
-      confetti(Object.assign({}, defaults, {
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-      }));
+      confetti(
+        Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        })
+      );
+      confetti(
+        Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        })
+      );
     }, 250);
   }
 
-  function startGame() {
-    let initialScore = localStorage.getItem("initialScore") || 200;
-    initialScore = Number(initialScore);
-
+  function startGame(initialScore) {
     let team1Score = initialScore;
     let team2Score = initialScore;
     let currentTeam = 1;
     let gameOver = false;
     let team1Index = 0;
     let team2Index = 0;
+
+    window.gameState = {
+      team1Score: team1Score,
+      team2Score: team2Score,
+      currentTeam: currentTeam,
+      gameOver: gameOver,
+      team1Index: team1Index,
+      team2Index: team2Index,
+    };
 
     const team1ScoreEl = document.getElementById("team1Score");
     const team2ScoreEl = document.getElementById("team2Score");
@@ -142,12 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function updateScoreboard() {
-      team1ScoreEl.textContent = team1Score;
-      team2ScoreEl.textContent = team2Score;
+      team1ScoreEl.textContent = window.gameState.team1Score;
+      team2ScoreEl.textContent = window.gameState.team2Score;
       let currentPlayer =
-        currentTeam === 1 ? window.team1Players[team1Index] : window.team2Players[team2Index];
+        window.gameState.currentTeam === 1
+          ? window.team1Players[window.gameState.team1Index]
+          : window.team2Players[window.gameState.team2Index];
       currentTurnEl.textContent = " " + currentPlayer;
-      if (currentTeam === 1) {
+      if (window.gameState.currentTeam === 1) {
         team1Box.classList.add("active");
         team2Box.classList.remove("active");
       } else {
@@ -157,37 +234,9 @@ document.addEventListener("DOMContentLoaded", () => {
       updatePlayerLists();
     }
 
-    function updatePlayerLists() {
-      const team1PlayerListEl = document.getElementById("team1PlayerList");
-      const team2PlayerListEl = document.getElementById("team2PlayerList");
-      team1PlayerListEl.innerHTML = "";
-      team2PlayerListEl.innerHTML = "";
-      window.team1Players.forEach((player, index) => {
-        const span = document.createElement("span");
-        span.textContent = player;
-        span.style.display = "block";
-        if (index === team1Index && currentTeam === 1) {
-          span.style.fontWeight = "bold";
-          span.style.color = "#e74c3c";
-        }
-        team1PlayerListEl.appendChild(span);
-      });
-      window.team2Players.forEach((player, index) => {
-        const span = document.createElement("span");
-        span.textContent = player;
-        span.style.display = "block";
-        if (index === team2Index && currentTeam === 2) {
-          span.style.fontWeight = "bold";
-          span.style.color = "#3498db";
-        }
-        team2PlayerListEl.appendChild(span);
-      });
-    }
-
-    
     function showFinalOverlay(losingTeam) {
-      const winningTeamName = losingTeam === "team1" ? "ازرق" : "احمر";
-      const winningTeamColor = losingTeam === "team1" ? "#3498db" : "#e74c3c";
+      const winningTeam = losingTeam === "team1" ? "team2" : "team1";
+      const winningTeamColor = winningTeam === "team1" ? "#e74c3c" : "#3498db";
 
       const finalOverlay = document.createElement("div");
       finalOverlay.id = "finalOverlay";
@@ -196,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
       finalOverlay.style.left = "0";
       finalOverlay.style.width = "100%";
       finalOverlay.style.height = "100%";
-      finalOverlay.style.backgroundColor = "rgba(0,0,0,0.8)";
+      finalOverlay.style.background = "linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9))";
       finalOverlay.style.display = "flex";
       finalOverlay.style.flexDirection = "column";
       finalOverlay.style.justifyContent = "center";
@@ -210,21 +259,26 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => (finalOverlay.style.opacity = "1"), 10);
 
       const message = document.createElement("h2");
-      message.textContent = `مبروووووووووووووك ${winningTeamName}`;
-      message.style.fontSize = "3em";
+      message.textContent = ` مبروووووك ${winningTeam === "team1" ? "احمر" : "ازرق"}!`;
+      message.style.fontSize = "3.5em";
       message.style.color = winningTeamColor;
-      message.style.textShadow = `0 0 10px ${winningTeamColor}`;
-      message.style.animation = "pulse 1.5s infinite";
+      message.style.textShadow = `0 0 0px ${winningTeamColor}`;
+      message.style.marginBottom = "20px";
       finalOverlay.appendChild(message);
 
       const resetBtn = document.createElement("button");
       resetBtn.textContent = "إعادة القيم";
-      resetBtn.className = "reset-btn";
+      resetBtn.style.padding = "15px 30px";
+      resetBtn.style.fontSize = "1.2em";
+      resetBtn.style.cursor = "pointer";
+      resetBtn.style.border = "8px";
+      resetBtn.style.borderRadius = "5px";
+      resetBtn.style.backgroundColor = winningTeamColor;
+      resetBtn.style.color = "#fff";
+      resetBtn.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
       finalOverlay.appendChild(resetBtn);
 
       document.body.appendChild(finalOverlay);
-
-      // تفعيل الاحتفالية بتأثير القصاصات
       runConfetti();
 
       resetBtn.addEventListener("click", () => {
@@ -242,6 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function refreshBoard() {
       container.innerHTML = "";
+      playHistory.innerHTML = "";
       reactionDisplay = document.createElement("div");
       reactionDisplay.id = "reactionDisplay";
       reactionDisplay.style.position = "absolute";
@@ -397,7 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let holdTimer;
         card.addEventListener("mousedown", () => {
-          if (gameOver) return;
+          if (window.gameState.gameOver) return;
           progressBar.style.transition = "width 0.3s linear";
           progressBar.offsetWidth;
           progressBar.style.width = "100%";
@@ -416,7 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
           progressBar.style.width = "0%";
         });
         card.addEventListener("click", () => {
-          if (gameOver) return;
+          if (window.gameState.gameOver) return;
           if (!card.classList.contains("clicked")) {
             revealCard(card);
           }
@@ -427,7 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function revealCard(card) {
       if (window.waitingForBoostSecondCard) return;
-      if (card.classList.contains("clicked") || gameOver) return;
+      if (card.classList.contains("clicked") || window.gameState.gameOver) return;
       card.classList.add("clicked");
       const value = Number(card.dataset.value);
       const type = card.dataset.type;
@@ -461,32 +516,37 @@ document.addEventListener("DOMContentLoaded", () => {
         handleBoostCard(card, value);
         return;
       } else {
+        let currentTeam = window.gameState.currentTeam;
+        let currentIndex =
+          currentTeam === 1
+            ? window.gameState.team1Index
+            : window.gameState.team2Index;
+
         if (currentTeam === 1) {
           if (value > 0) {
-            team2Score -= value;
+            window.gameState.team2Score -= value;
+            logAction(1, currentIndex, "نقص/ت الأزرق", value);
           } else {
-            team1Score += value;
+            window.gameState.team1Score += value;
+            logAction(1, currentIndex, "نقص/ت الأحمر", Math.abs(value));
           }
         } else {
           if (value > 0) {
-            team1Score -= value;
+            window.gameState.team1Score -= value;
+            logAction(2, currentIndex, "نقص/ت الأحمر", value);
           } else {
-            team2Score += value;
+            window.gameState.team2Score += value;
+            logAction(2, currentIndex, "نقص/ت الأزرق", Math.abs(value));
           }
-        }
-        if (currentTeam === 1) {
-          window.team1Stats[team1Index].score += value;
-        } else {
-          window.team2Stats[team2Index].score += value;
         }
         updateScoreboard();
 
-        if (team1Score <= 0) {
-          gameOver = true;
+        if (window.gameState.team1Score <= 0) {
+          window.gameState.gameOver = true;
           celebrateWin("team1");
           return;
-        } else if (team2Score <= 0) {
-          gameOver = true;
+        } else if (window.gameState.team2Score <= 0) {
+          window.gameState.gameOver = true;
           celebrateWin("team2");
           return;
         }
@@ -494,11 +554,11 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.add("selected", currentTeam === 1 ? "team1" : "team2");
 
         if (currentTeam === 1) {
-          team1Index = (team1Index + 1) % window.team1Players.length;
+          window.gameState.team1Index = (window.gameState.team1Index + 1) % window.team1Players.length;
         } else {
-          team2Index = (team2Index + 1) % window.team2Players.length;
+          window.gameState.team2Index = (window.gameState.team2Index + 1) % window.team2Players.length;
         }
-        currentTeam = currentTeam === 1 ? 2 : 1;
+        window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
         updateScoreboard();
       }
 
@@ -541,8 +601,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const cardDiv = document.createElement("div");
         cardDiv.className = "boost-card-option";
         cardDiv.textContent = text;
-        cardDiv.style.background = "#0A2742"; 
-        cardDiv.style.color = "#ffffff";         
+        cardDiv.style.background = "#0A2742";
+        cardDiv.style.color = "#ffffff";
         cardDiv.style.padding = "20px";
         cardDiv.style.borderRadius = "10px";
         cardDiv.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
@@ -552,7 +612,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cardDiv.style.fontSize = "1.2em";
         return cardDiv;
       }
-      
+
       const option1 = createOptionCard("أخذ الرقم");
       const option2 = createOptionCard("مربع جديد");
       const option3 = createOptionCard("نرد");
@@ -575,45 +635,49 @@ document.addEventListener("DOMContentLoaded", () => {
       instructionBtn.addEventListener("click", () => {
         alert(
           "1. أخذ الرقم: يضيف اللاعب لفريقه 35 نقطة.\n\n" +
-          "2. مربع جديد: يختار اللاعب مربع جديد، وإذا كان رقمه موجباً يحصل على 35 + الرقم الموجب، وإذا كان سالباً يحصل على الرقم السالب فقط.\n\n" +
-          "3. نرد: إذا حصل اللاعب على رقم أعلى من رقم البوت، يكسب 70 نقطة (35 + 35)، وإذا حصل على رقم أقل أو تعادل، يُخصم منه 35 نقطة."
+            "2. مربع جديد: يختار اللاعب مربع جديد، وإذا كان رقمه موجباً يحصل على 35 + الرقم الموجب، وإذا كان سالباً يحصل على الرقم السالب فقط.\n\n" +
+            "3. نرد: إذا حصل اللاعب على رقم أعلى من رقم البوت، يكسب 70 نقطة (35 + 35)، وإذا حصل على رقم أقل أو تعادل، يُخصم منه 35 نقطة."
         );
       });
 
       option1.addEventListener("click", () => {
+        let currentTeam = window.gameState.currentTeam;
+        let currentIndex = currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index;
         if (currentTeam === 1) {
-          team1Score += boostValue;
-          window.team1Stats[team1Index].score += boostValue;
+          window.gameState.team1Score += boostValue;
+          window.team1Stats[currentIndex].score += boostValue;
+          logAction(1, currentIndex, "زود/ت الأحمر", boostValue);
         } else {
-          team2Score += boostValue;
-          window.team2Stats[team2Index].score += boostValue;
+          window.gameState.team2Score += boostValue;
+          window.team2Stats[currentIndex].score += boostValue;
+          logAction(2, currentIndex, "زود/ت الأزرق", boostValue);
         }
         modal.style.opacity = "0";
         setTimeout(() => modal.remove(), 500);
         updateScoreboard();
-        if (team1Score <= 0) {
-          gameOver = true;
+        if (window.gameState.team1Score <= 0) {
+          window.gameState.gameOver = true;
           celebrateWin("team1");
           return;
-        } else if (team2Score <= 0) {
-          gameOver = true;
+        } else if (window.gameState.team2Score <= 0) {
+          window.gameState.gameOver = true;
           celebrateWin("team2");
           return;
         }
         if (currentTeam === 1) {
-          team1Index = (team1Index + 1) % window.team1Players.length;
+          window.gameState.team1Index = (window.gameState.team1Index + 1) % window.team1Players.length;
         } else {
-          team2Index = (team2Index + 1) % window.team2Players.length;
+          window.gameState.team2Index = (window.gameState.team2Index + 1) % window.team2Players.length;
         }
-        currentTeam = currentTeam === 1 ? 2 : 1;
+        window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
         updateScoreboard();
       });
 
       option2.addEventListener("click", () => {
         window.waitingForBoostSecondCard = {
           boostValue: boostValue,
-          team: currentTeam,
-          playerIndex: currentTeam === 1 ? team1Index : team2Index,
+          team: window.gameState.currentTeam,
+          playerIndex: window.gameState.currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index,
         };
         modal.style.opacity = "0";
         setTimeout(() => modal.remove(), 500);
@@ -648,13 +712,17 @@ document.addEventListener("DOMContentLoaded", () => {
         diceResult.innerHTML = `رقمك: ${playerRoll}<br>رقم البوت: ${botRoll}`;
         contentContainer.appendChild(diceResult);
 
+        let currentTeam = window.gameState.currentTeam;
+        let currentIndex = currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index;
         if (playerRoll > botRoll) {
           if (currentTeam === 1) {
-            team1Score += boostValue * 2;
-            window.team1Stats[team1Index].score += boostValue * 2;
+            window.gameState.team1Score += boostValue * 2;
+            window.team1Stats[currentIndex].score += boostValue * 2;
+            logAction(1, currentIndex, "زود/ت الأحمر", boostValue * 2);
           } else {
-            team2Score += boostValue * 2;
-            window.team2Stats[team2Index].score += boostValue * 2;
+            window.gameState.team2Score += boostValue * 2;
+            window.team2Stats[currentIndex].score += boostValue * 2;
+            logAction(2, currentIndex, "زود/ت الأزرق", boostValue * 2);
           }
           const winText = document.createElement("p");
           winText.textContent = "فزت! تم تدبيل النقاط";
@@ -662,11 +730,13 @@ document.addEventListener("DOMContentLoaded", () => {
           contentContainer.appendChild(winText);
         } else {
           if (currentTeam === 1) {
-            team1Score -= boostValue;
-            window.team1Stats[team1Index].score -= boostValue;
+            window.gameState.team1Score -= boostValue;
+            window.team1Stats[currentIndex].score -= boostValue;
+            logAction(1, currentIndex, "نقص/ت الأحمر", boostValue);
           } else {
-            team2Score -= boostValue;
-            window.team2Stats[team2Index].score -= boostValue;
+            window.gameState.team2Score -= boostValue;
+            window.team2Stats[currentIndex].score -= boostValue;
+            logAction(2, currentIndex, "نقص/ت الأزرق", boostValue);
           }
           const loseText = document.createElement("p");
           loseText.textContent = "خسرت! تم خصم النقاط";
@@ -679,21 +749,21 @@ document.addEventListener("DOMContentLoaded", () => {
           setTimeout(() => {
             modal.remove();
             updateScoreboard();
-            if (team1Score <= 0) {
-              gameOver = true;
+            if (window.gameState.team1Score <= 0) {
+              window.gameState.gameOver = true;
               celebrateWin("team1");
               return;
-            } else if (team2Score <= 0) {
-              gameOver = true;
+            } else if (window.gameState.team2Score <= 0) {
+              window.gameState.gameOver = true;
               celebrateWin("team2");
               return;
             }
             if (currentTeam === 1) {
-              team1Index = (team1Index + 1) % window.team1Players.length;
+              window.gameState.team1Index = (window.gameState.team1Index + 1) % window.team1Players.length;
             } else {
-              team2Index = (team2Index + 1) % window.team2Players.length;
+              window.gameState.team2Index = (window.gameState.team2Index + 1) % window.team2Players.length;
             }
-            currentTeam = currentTeam === 1 ? 2 : 1;
+            window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
             updateScoreboard();
           }, 500);
         }, 2000);
@@ -701,7 +771,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleBoostSecondCard(selectedCard) {
-      if (selectedCard.classList.contains("clicked") || gameOver) return;
+      if (selectedCard.classList.contains("clicked") || window.gameState.gameOver) return;
       selectedCard.classList.add("clicked");
       const secondValue = Number(selectedCard.dataset.value);
       const secondType = selectedCard.dataset.type;
@@ -718,18 +788,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const boostInfo = window.waitingForBoostSecondCard;
       if (!boostInfo) return;
       const originalBoostValue = boostInfo.boostValue;
-      let outcome = 0;
-      if (secondValue < 0) {
-        outcome = secondValue;
-      } else {
-        outcome = originalBoostValue + secondValue;
-      }
+      let outcome = secondValue < 0 ? secondValue : originalBoostValue + secondValue;
       if (boostInfo.team === 1) {
-        team1Score += outcome;
+        window.gameState.team1Score += outcome;
         window.team1Stats[boostInfo.playerIndex].score += outcome;
+        if (outcome > 0) {
+          logAction(1, boostInfo.playerIndex, "زود/ت الأحمر", outcome);
+        } else {
+          logAction(1, boostInfo.playerIndex, "نقص/ت الأحمر", Math.abs(outcome));
+        }
       } else {
-        team2Score += outcome;
+        window.gameState.team2Score += outcome;
         window.team2Stats[boostInfo.playerIndex].score += outcome;
+        if (outcome > 0) {
+          logAction(2, boostInfo.playerIndex, "زود/ت الأزرق", outcome);
+        } else {
+          logAction(2, boostInfo.playerIndex, "نقص/ت الأزرق", Math.abs(outcome));
+        }
       }
       selectedCard.classList.add(
         "selected",
@@ -737,21 +812,21 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       window.waitingForBoostSecondCard = null;
       updateScoreboard();
-      if (team1Score <= 0) {
-        gameOver = true;
+      if (window.gameState.team1Score <= 0) {
+        window.gameState.gameOver = true;
         celebrateWin("team1");
         return;
-      } else if (team2Score <= 0) {
-        gameOver = true;
+      } else if (window.gameState.team2Score <= 0) {
+        window.gameState.gameOver = true;
         celebrateWin("team2");
         return;
       }
       if (boostInfo.team === 1) {
-        team1Index = (team1Index + 1) % window.team1Players.length;
+        window.gameState.team1Index = (window.gameState.team1Index + 1) % window.team1Players.length;
       } else {
-        team2Index = (team2Index + 1) % window.team2Players.length;
+        window.gameState.team2Index = (window.gameState.team2Index + 1) % window.team2Players.length;
       }
-      currentTeam = currentTeam === 1 ? 2 : 1;
+      window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
       updateScoreboard();
     }
 
@@ -767,14 +842,12 @@ document.addEventListener("DOMContentLoaded", () => {
     updateScoreboard();
 
     function resetGame(resetIndividualScores) {
-      let initialScore = localStorage.getItem("initialScore") || 200;
-      initialScore = Number(initialScore);
-      team1Score = initialScore;
-      team2Score = initialScore;
-      currentTeam = 1;
-      gameOver = false;
-      team1Index = 0;
-      team2Index = 0;
+      window.gameState.team1Score = initialScore;
+      window.gameState.team2Score = initialScore;
+      window.gameState.currentTeam = 1;
+      window.gameState.gameOver = false;
+      window.gameState.team1Index = 0;
+      window.gameState.team2Index = 0;
       if (resetIndividualScores) {
         window.team1Stats = window.team1Players.map((player) => ({ name: player, score: 0 }));
         window.team2Stats = window.team2Players.map((player) => ({ name: player, score: 0 }));
@@ -792,10 +865,117 @@ document.addEventListener("DOMContentLoaded", () => {
       reactionDisplay.style.opacity = "0";
       reactionDisplay.style.transition = "opacity 0.3s ease-in-out";
       container.appendChild(reactionDisplay);
+      playHistory.innerHTML = "";
       createBoard();
       updateScoreboard();
     }
 
     window.resetGame = resetGame;
+  }
+
+  function openEditTeamsModal() {
+    const modal = document.createElement("div");
+    modal.id = "editTeamsModal";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100%";
+    modal.style.height = "100%";
+    modal.style.background = "rgba(0, 0, 0, 0.8)";
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.style.zIndex = "15000";
+
+    const content = document.createElement("div");
+    content.style.background = "#fff";
+    content.style.padding = "20px";
+    content.style.borderRadius = "10px";
+    content.style.width = "90%";
+    content.style.maxWidth = "500px";
+    content.style.textAlign = "center";
+
+    const title = document.createElement("h2");
+    title.textContent = "تعديل الفرق";
+    content.appendChild(title);
+
+    const team1Label = document.createElement("label");
+    team1Label.textContent = "التيم الاحمر";
+    team1Label.style.display = "block";
+    team1Label.style.marginTop = "10px";
+    content.appendChild(team1Label);
+
+    const team1Textarea = document.createElement("textarea");
+    team1Textarea.id = "editTeam1Players";
+    team1Textarea.style.width = "100%";
+    team1Textarea.style.height = "100px";
+    team1Textarea.value = window.team1Players.join("\n");
+    content.appendChild(team1Textarea);
+
+    const team2Label = document.createElement("label");
+    team2Label.textContent = "التيم الازرق";
+    team2Label.style.display = "block";
+    team2Label.style.marginTop = "10px";
+    content.appendChild(team2Label);
+
+    const team2Textarea = document.createElement("textarea");
+    team2Textarea.id = "editTeam2Players";
+    team2Textarea.style.width = "100%";
+    team2Textarea.style.height = "100px";
+    team2Textarea.value = window.team2Players.join("\n");
+    content.appendChild(team2Textarea);
+
+    const btnContainer = document.createElement("div");
+    btnContainer.style.marginTop = "20px";
+    btnContainer.style.display = "flex";
+    btnContainer.style.justifyContent = "space-around";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "حفظ";
+    saveBtn.style.padding = "10px 20px";
+    saveBtn.style.cursor = "pointer";
+    btnContainer.appendChild(saveBtn);
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "إلغاء";
+    cancelBtn.style.padding = "10px 20px";
+    cancelBtn.style.cursor = "pointer";
+    btnContainer.appendChild(cancelBtn);
+
+    content.appendChild(btnContainer);
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+
+    cancelBtn.addEventListener("click", () => {
+      modal.remove();
+    });
+
+    saveBtn.addEventListener("click", () => {
+      let newTeam1 = team1Textarea.value
+        .split(/\r?\n/)
+        .map((name) => name.trim())
+        .filter((name) => name);
+      let newTeam2 = team2Textarea.value
+        .split(/\r?\n/)
+        .map((name) => name.trim())
+        .filter((name) => name);
+
+      if (newTeam1.length === 0) newTeam1 = ["أحمر"];
+      if (newTeam2.length === 0) newTeam2 = ["أزرق"];
+
+      window.team1Players = newTeam1;
+      window.team2Players = newTeam2;
+
+      window.team1Stats = window.team1Players.map((player) => ({ name: player, score: 0 }));
+      window.team2Stats = window.team2Players.map((player) => ({ name: player, score: 0 }));
+
+      updatePlayerLists();
+      modal.remove();
+    });
+  }
+
+  const editTeamsBtn = document.getElementById("editTeamsBtn");
+  if (editTeamsBtn) {
+    editTeamsBtn.addEventListener("click", openEditTeamsModal);
   }
 });
