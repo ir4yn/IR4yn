@@ -587,3 +587,14 @@ button:hover {
 #initialScoreSelect {
   background-color: #333b3d !important;
 }
+#toggleHistoryBtn {
+  position: absolute;
+  cursor: pointer;
+  background-color: #e74d3c00;
+  color: #ffffff17;
+  font-size: small;
+}
+
+#currentTurn{
+  color: black;
+}

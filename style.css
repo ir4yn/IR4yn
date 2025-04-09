@@ -1,331 +1,442 @@
-/* ======================================
-   التنسيقات العامة لجميع الصفحات
-   ====================================== */
-   * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Tajawal', sans-serif;
-  }
-  
-  body {
-    background: #1a1a2e;
-    color: #fff;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-  
-  /* ======================================
-     تنسيقات الرسائل والأخطاء
-     ====================================== */
-  .error {
-    color: rgb(224, 37, 37);
-    margin-top: 10px;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Tajawal', sans-serif;
+}
+
+body {
+  background: #1a1a2e;
+  color: #fff;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* الهيدر */
+.main-header {
+  background: #162447;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.8rem;
+  color: #e94560;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.user-info {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #ff6b6b;
+  transform: translateY(-2px);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  color: rgb(255, 255, 255);
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  gap: 0.5rem;
+  font-family: 'Tajawal', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  max-width: 250px;
+  justify-content: center;
+}
+.user-info i {
+  color: #e94560;
+  font-size: 1.1rem;
+}
+
+
+/* منطقة الألعاب الرئيسية */
+.games-container {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #e94560;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.game-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+}
+
+.game-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.game-content {
+  padding: 1.5rem;
+}
+
+.game-title {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #e94560;
+}
+
+.game-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.game-btn {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-btn {
+  background: #e94560;
+  color: white;
+}
+
+.info-btn {
+  background: #162447;
+  color: white;
+}
+
+.game-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+/* الفوتر */
+.main-footer {
+  background: #162447;
+  padding: 0.5rem 1rem; 
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem; 
+}
+
+.footer-content p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem; 
+}
+a {
+  text-decoration: none;
+}
+.social-icon.discord {
+  font-size: 0.9rem; 
+}
+.social-icon {
+  color: white;
+  font-size: 1.5rem;
+  transition: all 0.3s ease; 
+  display: flex;
+  align-items: center;
+}
+
+.social-icon:hover {
+  transform: translateY(-3px); 
+}
+
+.social-icon.twitch:hover {
+  color: #9146ff; 
+}
+
+.social-icon.discord:hover {
+  color: #5865f2; 
+}
+
+.social-icon.x:hover {
+  color: #000000;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column; 
     text-align: center;
   }
   
-  /* ======================================
-     تنسيقات الهامبرغر والقائمة الجانبية
-     ====================================== */
-  #hamburger {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 1100;
-  }
-  
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background: #162447;
-    padding: 1rem;
-    transition: left 0.3s ease;
-    z-index: 1100;
-  }
-  
-  .sidebar.show {
-    left: 0;
-  }
-  
-  .close-sidebar {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 1rem;
-  }
-  
-  .sidebar h2 {
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .sidebar p {
-    margin-bottom: 1.5rem;
-    text-align: center;
-  }
-  
-  .sidebar button {
-    width: 100%;
-    padding: 10px;
-    background: #e94560;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .sidebar button:hover {
-    background: #ff6b6b;
-  }
-  
-  /* ======================================
-     تنسيقات الهيدر والصفحة الرئيسية (hero)
-     ====================================== */
-  .hero-section {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.936); /* تعديل: جعل الـ overlay أكثر شفافية */
-    z-index: 1;
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding-top: 30vh;
-  }
-  
-  #hero-title {
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  }
-  .version-btn{
-    background: #162447;
-    color: #fff;
-    border: none;
-    padding: 1rem 2rem;
-    margin: 0 1rem;
-    border-radius: 25px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  }
- 
-  /* أزرار اللعب والمعلومات */
-  #hero-buttons button {
-    background: #162447;
-    color: #fff;
-    border: none;
-    padding: 1rem 2rem;
-    margin: 0 1rem;
-    border-radius: 25px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  }
-  
-  #hero-buttons button:hover {
-    background: #e94560;
-    transform: translateY(-2px);
-  }
-  
-  /* ======================================
-     تنسيقات السلايدر
-     ====================================== */
-  .slider-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-  
-  .slide.active {
-    opacity: 1;
-  }
-  
-  /* عناصر التحكم بالسلايدر */
-  .slider-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-  }
-  
-  .slider-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    padding: 15px 30px; /* تعديل: زيادة الـ padding لتكبير الأزرار */
-    margin: 0 5px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-size: 1.5rem; /* تعديل: زيادة حجم الخط لتكبير الأزرار */
-  }
-  
-  .slider-btn:hover {
-    background: rgba(255, 255, 255, 0.4);
-  }
-  
-  /* ======================================
-     النوافذ المنبثقة (المودال)
-     ====================================== */
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-  }
-  
-  .modal.show {
-    display: flex;
+  .social-links {
     justify-content: center;
-    align-items: center;
   }
-  
-  .modal-content {
-    background: #162447;
-    padding: 2rem;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
+}
+
+/* المودال */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #1a1a2e;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  text-align: center;
+}
+
+.close-btn {
+  font-size: 30px;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: rgb(249, 59, 59); 
+}
+
+.close-btn:focus {
+  outline: none;
+}
+
+
+#modal-play {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
   }
-  
-  .close-btn {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
+
+  .games-grid {
+    grid-template-columns: 1fr;
   }
-  
-  /* ======================================
-     تنسيقات صفحات التسجيل والدخول
-     ====================================== */
+
+  .game-card {
+    margin-bottom: 1rem;
+  }
+}
+
+.auth-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 2rem auto; 
+}
+
+
+.auth-container h2 {
+  text-align: center;
+  color: #e94560;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.auth-container form input {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.auth-container form input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #e94560;
+  outline: none;
+  box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+}
+
+
+#login-btn,
+#signup-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(45deg, #e94560, #ff6b6b);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+
+#login-btn:hover,
+#signup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+}
+
+
+.error-message {
+  background: #ff4757;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.auth-link a {
+  color: #e94560;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.auth-link a:hover {
+  color: #ff6b6b;
+  text-decoration: underline;
+}
+
+
+@media (max-width: 480px) {
   .auth-container {
-    max-width: 400px;
-    margin: 5rem auto;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
     border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   }
   
   .auth-container h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
   }
   
-  .auth-container input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    border-radius: 8px;
+  .auth-container form input {
+    padding: 0.8rem;
   }
-  
-  .auth-container button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 1rem;
-    background: #e94560;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .auth-container button:hover {
-    background: #ff6b6b;
-  }
-  
-  .auth-container p {
-    text-align: center;
-    margin-top: 1.5rem;
-  }
-  
-  .auth-container a {
-    color: #e94560;
-    text-decoration: none;
-  }
-  
-  /* ======================================
-     تنسيقات متجاوبة للجوال
-     ====================================== */
-  @media (max-width: 768px) {
-    #hero-title {
-      font-size: 2.5rem;
-    }
-  
-    #hero-buttons button {
-      display: block;
-      width: 80%;
-      margin: 1rem auto;
-    }
-  
-    .slider-controls {
-      bottom: 10px;
-    }
-  
-    .auth-container {
-      margin: 2rem auto;
-      padding: 1.5rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    #hero-title {
-      font-size: 2rem;
-    }
-  
-    .modal-content {
-      padding: 1.5rem;
-    }
-  
-    .auth-container {
-      padding: 1rem;
-    }
-  }
+}
+
+.version-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.version-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.version-btn:hover {
+  background: #e94560;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+  transform: translateY(-2px);
+}
+
+.countdown {
+  font-size: 10px; 
+  color: #ffffff;
+  margin-top: 10px; 
+}

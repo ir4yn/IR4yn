@@ -11,6 +11,9 @@ let activeStage = 1;
 let lastAnswerTeam = null;
 let consecutiveCount = 0;
 let pendingLifeline = { team: null, lifeline: null };
+let timerInterval;
+let timerSeconds = 0;
+let isTimerRunning = false;
 
 function saveGameState() {
   const state = {
@@ -29,9 +32,6 @@ function loadUserData(uid) {
   const userRef = firebase.database().ref('users/' + uid);
   return userRef.once('value').then((snapshot) => {
     currentUserData = snapshot.val() || {};
-    // لا نقوم بإعادة تعيين answeredQuestions هنا حتى تظل الأسئلة المحذوفة محفوظة للمستخدم
-    // currentUserData.answeredQuestions = {};  <-- هذا السطر تمت إزالته
-
     if (!currentUserData.gameState) {
       currentUserData.gameState = {
         bluePosition: 1,
@@ -94,8 +94,8 @@ function resetGame() {
   $('#answerDisplay').empty();
   updateQuestionCounts();
   saveGameState();
-  // لا نقوم بحذف answeredQuestions هنا؛ بحيث تظل الأسئلة المحذوفة من قبل المستخدم محفوظة نهائيًا
-  alert("تم إعادة تعيين القيم، والأسئلة المُجابة ستبقى محذوفة للمستخدم.");
+  $('.timer-container').hide();
+  alert("تم  تعيين القيم.");
 }
 
 function initStages() {
@@ -119,7 +119,6 @@ function updateQuestionCounts() {
   for (let stage = 1; stage <= 10; stage++) {
     let count = 0;
     if (gameState.questions[stage]) {
-      // يتم استبعاد الأسئلة التي تم الإجابة عليها من قبل المستخدم بشكل دائم
       const userAnswered = (currentUserData && currentUserData.answeredQuestions && currentUserData.answeredQuestions[stage]) || [];
       count = Object.keys(gameState.questions[stage]).filter(qid => !userAnswered.includes(qid)).length;
     }
@@ -134,19 +133,32 @@ function updateUI() {
     const circleWidth = 50;
     const offsetX = (stageWidth - circleWidth) / 2;
     stageElements.removeClass('active-stage');
-    let blueStageElem = stageElements.filter(function() { return $(this).data('stage') === gameState.bluePosition; });
+    stageElements.find('.stage-category').removeClass('active-category');
+
+    let blueStageElem = stageElements.filter(function() { 
+      return $(this).data('stage') === gameState.bluePosition; 
+    });
     if (blueStageElem.length) {
       let pos = blueStageElem.position();
       $('#blueCircle').css({ top: pos.top + 10, left: pos.left + offsetX });
     }
-    let redStageElem = stageElements.filter(function() { return $(this).data('stage') === gameState.redPosition; });
+    let redStageElem = stageElements.filter(function() { 
+      return $(this).data('stage') === gameState.redPosition; 
+    });
     if (redStageElem.length) {
       let pos = redStageElem.position();
       $('#redCircle').css({ top: pos.top + stageHeight - 50 - 10, left: pos.left + offsetX });
     }
-    stageElements.filter(function() { return $(this).data('stage') === activeStage; }).addClass('active-stage');
+
+    const activeElem = stageElements.filter(function() { 
+      return $(this).data('stage') === activeStage; 
+    });
+    activeElem.addClass('active-stage');
+
+    activeElem.find('.stage-category').addClass('active-category');
   }
 }
+
 
 function initLifelines() {
   let blueLifelinesContainer = $(`
@@ -264,6 +276,41 @@ function handleAnswer(team, option) {
   saveGameState();
 }
 
+function startTimer() {
+  if (!isTimerRunning) {
+    timerInterval = setInterval(() => {
+      timerSeconds++;
+      updateTimerDisplay();
+    }, 1000);
+    isTimerRunning = true;
+  }
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  isTimerRunning = false;
+}
+
+function resumeTimer() {
+  if (!isTimerRunning) {
+    startTimer();
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 0;
+  updateTimerDisplay();
+  isTimerRunning = false;
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timerSeconds / 60);
+  const seconds = timerSeconds % 60;
+  const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  $('#timer').text(formattedTime);
+}
+
 $('#showQuestion').click(function() {
   $('#questionDisplay, #answerDisplay').empty();
   window.currentQuestionId = null;
@@ -281,7 +328,19 @@ $('#showQuestion').click(function() {
         window.currentQuestionData = questionData;
         let categoryName = $(`.stage[data-stage="${activeStage}"] .stage-category`).text();
         $('#questionDisplay').html(
-          `<div class="question-box">
+          `<div class="timer-container">
+  <div class="timer-box">
+    <div class="timer-controls left">
+      <button id="resetTimer" class="btn btn-secondary"><i class="fas fa-redo"></i></button>
+    </div>
+    <div id="timer">00:00</div>
+    <div class="timer-controls right">
+      <button id="pauseTimer" class="btn btn-secondary"><i class="fas fa-pause"></i></button>
+      <button id="resumeTimer" class="btn btn-secondary"><i class="fas fa-play"></i></button>
+    </div>
+  </div>
+</div>
+           <div class="question-box">
              <div class="question-category">${categoryName}</div>
              <div class="question-text">${questionData.text}</div>
              ${questionData.image ? `<div class="question-img-container"><img src="${questionData.image}" class="img-fluid"></div>` : ''}
@@ -294,6 +353,9 @@ $('#showQuestion').click(function() {
         );
         $('.question-text').fitText(1.2, { minFontSize: '14px', maxFontSize: '28px' });
         $('#showAnswerButton').prop('disabled', false).show();
+        resetTimer();
+        startTimer();
+        $('.timer-container').show();
       } else {
         $('#questionDisplay').html(`<p>لا يوجد سؤال في هذه المرحلة.</p>`);
       }
@@ -338,7 +400,6 @@ $('#showAnswerButton').click(function() {
   if (!currentUserData.answeredQuestions[activeStage]) {
     currentUserData.answeredQuestions[activeStage] = [];
   }
-  // حفظ السؤال المُجاب بحيث لن يظهر مرة أخرى للمستخدم
   currentUserData.answeredQuestions[activeStage].push(window.currentQuestionId);
   firebase.database().ref('users/' + currentUser + '/answeredQuestions').set(currentUserData.answeredQuestions);
   window.currentQuestionId = null;
@@ -357,6 +418,10 @@ $('#choosePush').click(function() {
   let team = $('#decisionModal').data('answeringTeam');
   handleAnswer(team, "push");
 });
+
+$(document).on('click', '#pauseTimer', pauseTimer);
+$(document).on('click', '#resumeTimer', resumeTimer);
+$(document).on('click', '#resetTimer', resetTimer);
 
 $('#resetGame').click(() => resetGame());
 $('#settingsButton').click(() => new bootstrap.Modal(document.getElementById('settingsModal')).show());
@@ -422,7 +487,6 @@ $(document).ready(function() {
     if (user) {
       currentUser = user.uid;
       loadUserData(user.uid).then(() => {
-        // عدم استدعاء resetGame هنا حتى تظل answeredQuestions محفوظة للمستخدم
         $('#gameContainer').show();
         initStages();
         loadStageConfigurations();
@@ -434,6 +498,8 @@ $(document).ready(function() {
       window.location.href = "/login.html";
     }
   });
+
+  
 
   const decisionModal = document.getElementById('decisionModal');
   decisionModal.addEventListener('shown.bs.modal', function() {

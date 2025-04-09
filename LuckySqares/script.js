@@ -35,26 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialScore = Number(initialScoreSelect.value);
     const team1Text = team1PlayersInput.value.trim();
     const team2Text = team2PlayersInput.value.trim();
-
-    let team1Array = team1Text
-      ? team1Text.split(/\r?\n/).map((name) => name.trim()).filter((name) => name)
-      : [];
-    let team2Array = team2Text
-      ? team2Text.split(/\r?\n/).map((name) => name.trim()).filter((name) => name)
-      : [];
-
+    let team1Array = team1Text ? team1Text.split(/\r?\n/).map(name => name.trim()).filter(name => name) : [];
+    let team2Array = team2Text ? team2Text.split(/\r?\n/).map(name => name.trim()).filter(name => name) : [];
     if (team1Array.length === 0) team1Array = ["أحمر"];
     if (team2Array.length === 0) team2Array = ["أزرق"];
-
     window.team1Players = team1Array;
     window.team2Players = team2Array;
-
-    window.team1Stats = window.team1Players.map((player) => ({ name: player, score: 0 }));
-    window.team2Stats = window.team2Players.map((player) => ({ name: player, score: 0 }));
-
+    window.team1Stats = window.team1Players.map(player => ({ name: player, score: 0 }));
+    window.team2Stats = window.team2Players.map(player => ({ name: player, score: 0 }));
     lobby.style.display = "none";
     gameArea.style.display = "block";
-
     startGame(initialScore);
   });
 
@@ -63,11 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const playerIndex = entry.dataset.playerIndex;
     const action = entry.dataset.action;
     const points = entry.dataset.points;
-    let playerName =
-      team == 1 ? window.team1Players[playerIndex] : window.team2Players[playerIndex];
+    let playerName = team == 1 ? window.team1Players[playerIndex] : window.team2Players[playerIndex];
     entry.textContent = `${playerName} ${action} ${points}`;
     entry.style.color = team == 1 ? "#e74c3c" : "#3498db";
   }
+
   function logAction(team, playerIndex, action, points) {
     const entry = document.createElement("div");
     entry.className = "log-entry";
@@ -78,10 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
     entry.style.fontSize = "0.8em";
     entry.style.textAlign = "center";
     entry.style.marginBottom = "5px";
-
     updateLogEntryText(entry);
     playHistory.appendChild(entry);
-
     entry.style.opacity = "0";
     entry.style.transform = "translateY(20px)";
     setTimeout(() => {
@@ -89,12 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
       entry.style.opacity = "1";
       entry.style.transform = "translateY(0)";
     }, 10);
-
     playHistory.scrollTop = playHistory.scrollHeight;
   }
+
   function updatePlayHistory() {
     const entries = document.querySelectorAll("#playHistory .log-entry");
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
       updateLogEntryText(entry);
     });
   }
@@ -108,10 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const span = document.createElement("span");
       span.textContent = player;
       span.style.display = "block";
-      if (
-        index === window.gameState.team1Index &&
-        window.gameState.currentTeam === 1
-      ) {
+      if (index === window.gameState.team1Index && window.gameState.currentTeam === 1) {
         span.style.fontWeight = "bold";
         span.style.color = "#e74c3c";
       }
@@ -121,10 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const span = document.createElement("span");
       span.textContent = player;
       span.style.display = "block";
-      if (
-        index === window.gameState.team2Index &&
-        window.gameState.currentTeam === 2
-      ) {
+      if (index === window.gameState.team2Index && window.gameState.currentTeam === 2) {
         span.style.fontWeight = "bold";
         span.style.color = "#3498db";
       }
@@ -142,11 +124,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ticks: 60,
       zIndex: 13000,
     };
-
     function randomInRange(min, max) {
       return Math.random() * (max - min) + min;
     }
-
     const interval = setInterval(function () {
       const timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) {
@@ -154,18 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       const particleCount = 50 * (timeLeft / duration);
-      confetti(
-        Object.assign({}, defaults, {
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        })
-      );
-      confetti(
-        Object.assign({}, defaults, {
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        })
-      );
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
     }, 250);
   }
 
@@ -176,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let gameOver = false;
     let team1Index = 0;
     let team2Index = 0;
-
     window.gameState = {
       team1Score: team1Score,
       team2Score: team2Score,
@@ -185,14 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
       team1Index: team1Index,
       team2Index: team2Index,
     };
-
     const team1ScoreEl = document.getElementById("team1Score");
     const team2ScoreEl = document.getElementById("team2Score");
     const currentTurnEl = document.getElementById("currentTurn");
     const team1Box = document.getElementById("team1Box");
     const team2Box = document.getElementById("team2Box");
     const container = document.querySelector(".grid-container");
-
     let reactionDisplay = document.createElement("div");
     reactionDisplay.id = "reactionDisplay";
     reactionDisplay.style.position = "absolute";
@@ -205,9 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reactionDisplay.style.opacity = "0";
     reactionDisplay.style.transition = "opacity 0.3s ease-in-out";
     container.appendChild(reactionDisplay);
-
     window.waitingForBoostSecondCard = null;
-
     container.addEventListener("click", function (e) {
       const target = e.target;
       let card = target.closest(".gold-card");
@@ -215,14 +180,10 @@ document.addEventListener("DOMContentLoaded", () => {
         handleBoostSecondCard(card);
       }
     });
-
     function updateScoreboard() {
       team1ScoreEl.textContent = window.gameState.team1Score;
       team2ScoreEl.textContent = window.gameState.team2Score;
-      let currentPlayer =
-        window.gameState.currentTeam === 1
-          ? window.team1Players[window.gameState.team1Index]
-          : window.team2Players[window.gameState.team2Index];
+      let currentPlayer = window.gameState.currentTeam === 1 ? window.team1Players[window.gameState.team1Index] : window.team2Players[window.gameState.team2Index];
       currentTurnEl.textContent = " " + currentPlayer;
       if (window.gameState.currentTeam === 1) {
         team1Box.classList.add("active");
@@ -233,11 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       updatePlayerLists();
     }
-
     function showFinalOverlay(losingTeam) {
       const winningTeam = losingTeam === "team1" ? "team2" : "team1";
       const winningTeamColor = winningTeam === "team1" ? "#e74c3c" : "#3498db";
-
       const finalOverlay = document.createElement("div");
       finalOverlay.id = "finalOverlay";
       finalOverlay.style.position = "fixed";
@@ -257,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
       finalOverlay.style.transition = "opacity 0.9s ease-in-out";
       finalOverlay.style.opacity = "0";
       setTimeout(() => (finalOverlay.style.opacity = "1"), 10);
-
       const message = document.createElement("h2");
       message.textContent = ` مبروووووك ${winningTeam === "team1" ? "احمر" : "ازرق"}!`;
       message.style.fontSize = "3.5em";
@@ -265,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
       message.style.textShadow = `0 0 0px ${winningTeamColor}`;
       message.style.marginBottom = "20px";
       finalOverlay.appendChild(message);
-
       const resetBtn = document.createElement("button");
       resetBtn.textContent = "إعادة القيم";
       resetBtn.style.padding = "15px 30px";
@@ -277,10 +234,8 @@ document.addEventListener("DOMContentLoaded", () => {
       resetBtn.style.color = "#fff";
       resetBtn.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
       finalOverlay.appendChild(resetBtn);
-
       document.body.appendChild(finalOverlay);
       runConfetti();
-
       resetBtn.addEventListener("click", () => {
         finalOverlay.style.opacity = "0";
         setTimeout(() => finalOverlay.remove(), 500);
@@ -289,11 +244,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     }
-
     function celebrateWin(losingTeam) {
       showFinalOverlay(losingTeam);
     }
-
     function refreshBoard() {
       container.innerHTML = "";
       playHistory.innerHTML = "";
@@ -309,110 +262,34 @@ document.addEventListener("DOMContentLoaded", () => {
       reactionDisplay.style.opacity = "0";
       reactionDisplay.style.transition = "opacity 0.3s ease-in-out";
       container.appendChild(reactionDisplay);
+      playHistory.innerHTML = "";
       createBoard();
+      updateScoreboard();
     }
-
     function createBoard() {
       const images = [
-        "images/1.png",
-        "images/2.png",
-        "images/3.png",
-        "images/4.png",
-        "images/5.png",
-        "images/6.png",
-        "images/7.png",
-        "images/8.png",
-        "images/9.png",
-        "images/10.png",
-        "images/11.png",
-        "images/12.png",
-        "images/13.png",
-        "images/14.png",
-        "images/15.png",
-        "images/16.png",
-        "images/17.png",
-        "images/18.png",
-        "images/19.png",
-        "images/20.png",
-        "images/21.png",
-        "images/22.png",
-        "images/23.png",
-        "images/24.png",
-        "images/25.png",
-        "images/26.png",
-        "images/27.png",
-        "images/28.png",
-        "images/29.png",
-        "images/30.png",
-        "images/31.png",
-        "images/32.png",
-        "images/33.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/34.png",
-        "images/35.png",
-        "images/36.png",
-        "images/37.png",
-        "images/38.png",
-        "images/39.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/img5.png",
-        "images/40.png",
-        "images/41.png",
-        "images/42.png",
-        "images/a.png",
-        "images/b.png",
-        "images/c.png",
-        "images/r.png",
-        "images/r.png",
-        "images/r.png",
-        "images/r.png",
-        "images/d.png",
-        "images/e.png",
-        "images/f.png",
-        "images/g.png",
-        "images/h.png",
-        "images/k.png",
-        "images/l.png",
-        "images/m.png",
-        "images/n.png",
-        "images/r.png",
-        "images/s.png",
-        "images/t.png",
-        "images/w.png",
-        "images/53.png",
-        "images/54.png",
-        "images/55.png",
-        "images/56.png",
-        "images/57.png",
-        "images/58.png",
-        "images/59.png",
-        "images/60.png",
-        "images/61.png",
-        "images/62.png",
-        "images/43.png",
-        "images/44.png",
-        "images/45.png",
-        "images/46.png",
-        "images/47.png",
-        "images/48.png",
-        "images/49.png",
-        "images/50.png",
-        "images/51.png",
-        "images/52.png",
+        "images/1.png","images/2.png","images/3.png","images/4.png","images/5.png","images/6.png",
+        "images/7.png","images/8.png","images/9.png","images/10.png","images/11.png","images/12.png",
+        "images/13.png","images/14.png","images/15.png","images/16.png","images/17.png","images/18.png",
+        "images/19.png","images/20.png","images/21.png","images/22.png","images/23.png","images/24.png",
+        "images/25.png","images/26.png","images/27.png","images/28.png","images/29.png","images/30.png",
+        "images/31.png","images/32.png","images/33.png","images/img5.png","images/img5.png","images/img5.png",
+        "images/img5.png","images/34.png","images/35.png","images/36.png","images/37.png","images/38.png",
+        "images/39.png","images/img5.png","images/img5.png","images/img5.png","images/img5.png","images/40.png",
+        "images/41.png","images/42.png","images/a.png","images/b.png","images/c.png","images/r.png",
+        "images/r.png","images/r.png","images/r.png","images/d.png","images/e.png","images/f.png",
+        "images/g.png","images/h.png","images/k.png","images/l.png","images/m.png","images/n.png",
+        "images/r.png","images/s.png","images/t.png","images/w.png","images/53.png","images/54.png",
+        "images/55.png","images/56.png","images/57.png","images/58.png","images/59.png","images/60.png",
+        "images/61.png","images/62.png","images/43.png","images/44.png","images/45.png","images/46.png",
+        "images/47.png","images/48.png","images/49.png","images/50.png","images/51.png","images/52.png"
       ];
       let totalCards = 90;
       let cardList = [];
-
       const boostCount = 5;
       for (let i = 0; i < boostCount; i++) {
         cardList.push({ value: 35, type: "boost" });
       }
-
       const normalCount = totalCards - boostCount;
       for (let i = 0; i < normalCount; i++) {
         const num = Math.floor(Math.random() * 20) + 1;
@@ -420,9 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const value = num * sign;
         cardList.push({ value: value, type: "normal" });
       }
-
       cardList = shuffle(cardList);
-
       for (let i = 0; i < totalCards; i++) {
         const row = Math.floor(i / 10) + 1;
         const col = (i % 10) + 1;
@@ -437,19 +312,16 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.add("gold-card");
         card.dataset.value = cardData.value;
         card.dataset.type = cardData.type;
-
         const imgElement = document.createElement("img");
         imgElement.src = images[i % images.length];
         imgElement.alt = "صورة البطاقة";
         card.appendChild(imgElement);
-
         const progressBarContainer = document.createElement("div");
         progressBarContainer.classList.add("progress-bar-container");
         const progressBar = document.createElement("div");
         progressBar.classList.add("progress-bar");
         progressBarContainer.appendChild(progressBar);
         card.appendChild(progressBarContainer);
-
         let holdTimer;
         card.addEventListener("mousedown", () => {
           if (window.gameState.gameOver) return;
@@ -479,7 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
         container.appendChild(card);
       }
     }
-
     function revealCard(card) {
       if (window.waitingForBoostSecondCard) return;
       if (card.classList.contains("clicked") || window.gameState.gameOver) return;
@@ -488,7 +359,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const type = card.dataset.type;
       card.style.transform = "scale(1.1)";
       card.style.transition = "transform 0.3s ease-in-out";
-
       setTimeout(() => {
         if (type === "boost") {
           card.textContent = "+" + value;
@@ -506,22 +376,16 @@ document.addEventListener("DOMContentLoaded", () => {
           reactionDisplay.style.opacity = "0";
         }, 2000);
       }, 200);
-
       const progressBarContainer = card.querySelector(".progress-bar-container");
       if (progressBarContainer) {
         progressBarContainer.remove();
       }
-
       if (type === "boost") {
         handleBoostCard(card, value);
         return;
       } else {
         let currentTeam = window.gameState.currentTeam;
-        let currentIndex =
-          currentTeam === 1
-            ? window.gameState.team1Index
-            : window.gameState.team2Index;
-
+        let currentIndex = currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index;
         if (currentTeam === 1) {
           if (value > 0) {
             window.gameState.team2Score -= value;
@@ -540,7 +404,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
         updateScoreboard();
-
         if (window.gameState.team1Score <= 0) {
           window.gameState.gameOver = true;
           celebrateWin("team1");
@@ -550,9 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
           celebrateWin("team2");
           return;
         }
-
         card.classList.add("selected", currentTeam === 1 ? "team1" : "team2");
-
         if (currentTeam === 1) {
           window.gameState.team1Index = (window.gameState.team1Index + 1) % window.team1Players.length;
         } else {
@@ -561,7 +422,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
         updateScoreboard();
       }
-
       setTimeout(() => {
         const remainingCards = container.querySelectorAll(".gold-card:not(.clicked)");
         if (remainingCards.length === 0) {
@@ -569,7 +429,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }, 500);
     }
-
     function handleBoostCard(card, boostValue) {
       const modal = document.createElement("div");
       modal.id = "boostModal";
@@ -586,7 +445,6 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.style.transition = "opacity 0.5s ease-in-out";
       modal.style.opacity = "0";
       setTimeout(() => (modal.style.opacity = "1"), 10);
-
       const contentContainer = document.createElement("div");
       contentContainer.className = "boost-content";
       contentContainer.style.display = "flex";
@@ -596,7 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
       contentContainer.style.padding = "20px";
       contentContainer.style.background = "rgba(255,255,255,0.1)";
       contentContainer.style.borderRadius = "15px";
-
       function createOptionCard(text) {
         const cardDiv = document.createElement("div");
         cardDiv.className = "boost-card-option";
@@ -612,15 +469,12 @@ document.addEventListener("DOMContentLoaded", () => {
         cardDiv.style.fontSize = "1.2em";
         return cardDiv;
       }
-
       const option1 = createOptionCard("أخذ الرقم");
       const option2 = createOptionCard("مربع جديد");
       const option3 = createOptionCard("نرد");
-
       contentContainer.appendChild(option1);
       contentContainer.appendChild(option2);
       contentContainer.appendChild(option3);
-
       const instructionBtn = document.createElement("button");
       instructionBtn.textContent = "الشرح";
       instructionBtn.className = "boost-btn instructions-btn";
@@ -628,18 +482,11 @@ document.addEventListener("DOMContentLoaded", () => {
       instructionBtn.style.padding = "10px 20px";
       instructionBtn.style.cursor = "pointer";
       contentContainer.appendChild(instructionBtn);
-
       modal.appendChild(contentContainer);
       document.body.appendChild(modal);
-
       instructionBtn.addEventListener("click", () => {
-        alert(
-          "1. أخذ الرقم: يضيف اللاعب لفريقه 35 نقطة.\n\n" +
-            "2. مربع جديد: يختار اللاعب مربع جديد، وإذا كان رقمه موجباً يحصل على 35 + الرقم الموجب، وإذا كان سالباً يحصل على الرقم السالب فقط.\n\n" +
-            "3. نرد: إذا حصل اللاعب على رقم أعلى من رقم البوت، يكسب 70 نقطة (35 + 35)، وإذا حصل على رقم أقل أو تعادل، يُخصم منه 35 نقطة."
-        );
+        alert("1. أخذ الرقم: يضيف اللاعب لفريقه 35 نقطة.\n\n2. مربع جديد: يختار اللاعب مربع جديد، وإذا كان رقمه موجباً يحصل على 35 + الرقم الموجب، وإذا كان سالباً يحصل على الرقم السالب فقط.\n\n3. نرد: إذا حصل اللاعب على رقم أعلى من رقم البوت، يكسب 70 نقطة (35 + 35)، وإذا حصل على رقم أقل أو تعادل، يُخصم منه 35 نقطة.");
       });
-
       option1.addEventListener("click", () => {
         let currentTeam = window.gameState.currentTeam;
         let currentIndex = currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index;
@@ -672,7 +519,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
         updateScoreboard();
       });
-
       option2.addEventListener("click", () => {
         window.waitingForBoostSecondCard = {
           boostValue: boostValue,
@@ -700,18 +546,15 @@ document.addEventListener("DOMContentLoaded", () => {
           setTimeout(() => secondCardPrompt.remove(), 500);
         }, 2000);
       });
-
       option3.addEventListener("click", () => {
         const playerRoll = Math.floor(Math.random() * 8) + 1;
         const botRoll = Math.floor(Math.random() * 8) + 1;
-
         contentContainer.innerHTML = "";
         const diceResult = document.createElement("p");
         diceResult.style.fontSize = "1.8em";
         diceResult.style.margin = "20px 0";
         diceResult.innerHTML = `رقمك: ${playerRoll}<br>رقم البوت: ${botRoll}`;
         contentContainer.appendChild(diceResult);
-
         let currentTeam = window.gameState.currentTeam;
         let currentIndex = currentTeam === 1 ? window.gameState.team1Index : window.gameState.team2Index;
         if (playerRoll > botRoll) {
@@ -743,7 +586,6 @@ document.addEventListener("DOMContentLoaded", () => {
           loseText.style.color = "#e74c3c";
           contentContainer.appendChild(loseText);
         }
-
         setTimeout(() => {
           modal.style.opacity = "0";
           setTimeout(() => {
@@ -769,7 +611,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
       });
     }
-
     function handleBoostSecondCard(selectedCard) {
       if (selectedCard.classList.contains("clicked") || window.gameState.gameOver) return;
       selectedCard.classList.add("clicked");
@@ -778,13 +619,11 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedCard.style.transform = "scale(1.1)";
       selectedCard.style.transition = "transform 0.3s ease-in-out";
       setTimeout(() => {
-        selectedCard.textContent =
-          secondType === "boost" ? "+" + secondValue : secondValue;
+        selectedCard.textContent = secondType === "boost" ? "+" + secondValue : secondValue;
         selectedCard.style.transform = "scale(1)";
       }, 200);
       const pbContainer = selectedCard.querySelector(".progress-bar-container");
       if (pbContainer) pbContainer.remove();
-
       const boostInfo = window.waitingForBoostSecondCard;
       if (!boostInfo) return;
       const originalBoostValue = boostInfo.boostValue;
@@ -806,10 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
           logAction(2, boostInfo.playerIndex, "نقص/ت الأزرق", Math.abs(outcome));
         }
       }
-      selectedCard.classList.add(
-        "selected",
-        boostInfo.team === 1 ? "team1" : "team2"
-      );
+      selectedCard.classList.add("selected", boostInfo.team === 1 ? "team1" : "team2");
       window.waitingForBoostSecondCard = null;
       updateScoreboard();
       if (window.gameState.team1Score <= 0) {
@@ -829,7 +665,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.gameState.currentTeam = window.gameState.currentTeam === 1 ? 2 : 1;
       updateScoreboard();
     }
-
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -837,10 +672,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       return array;
     }
-
     createBoard();
     updateScoreboard();
-
     function resetGame(resetIndividualScores) {
       window.gameState.team1Score = initialScore;
       window.gameState.team2Score = initialScore;
@@ -849,8 +682,8 @@ document.addEventListener("DOMContentLoaded", () => {
       window.gameState.team1Index = 0;
       window.gameState.team2Index = 0;
       if (resetIndividualScores) {
-        window.team1Stats = window.team1Players.map((player) => ({ name: player, score: 0 }));
-        window.team2Stats = window.team2Players.map((player) => ({ name: player, score: 0 }));
+        window.team1Stats = window.team1Players.map(player => ({ name: player, score: 0 }));
+        window.team2Stats = window.team2Players.map(player => ({ name: player, score: 0 }));
       }
       container.innerHTML = "";
       reactionDisplay = document.createElement("div");
@@ -869,8 +702,27 @@ document.addEventListener("DOMContentLoaded", () => {
       createBoard();
       updateScoreboard();
     }
-
     window.resetGame = resetGame;
+    const toggleHistoryBtn = document.createElement("button");
+    toggleHistoryBtn.id = "toggleHistoryBtn";
+    toggleHistoryBtn.textContent = "إخفاء ";
+    toggleHistoryBtn.style.position = "absolute";
+    toggleHistoryBtn.style.top = "63%";
+    toggleHistoryBtn.style.right = "835px";
+    toggleHistoryBtn.style.transform = "translateY(-50%)";
+    toggleHistoryBtn.style.padding = "10px 20px";
+    toggleHistoryBtn.style.zIndex = "15000";
+    toggleHistoryBtn.style.cursor = "pointer";
+    toggleHistoryBtn.addEventListener("click", () => {
+      if (playHistory.style.display === "none") {
+        playHistory.style.display = "flex";
+        toggleHistoryBtn.textContent = "إخفاء ";
+      } else {
+        playHistory.style.display = "none";
+        toggleHistoryBtn.textContent = "إظهار ";
+      }
+    });
+    gameArea.appendChild(toggleHistoryBtn);
   }
 
   function openEditTeamsModal() {
@@ -886,7 +738,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.justifyContent = "center";
     modal.style.alignItems = "center";
     modal.style.zIndex = "15000";
-
     const content = document.createElement("div");
     content.style.background = "#fff";
     content.style.padding = "20px";
@@ -894,81 +745,60 @@ document.addEventListener("DOMContentLoaded", () => {
     content.style.width = "90%";
     content.style.maxWidth = "500px";
     content.style.textAlign = "center";
-
     const title = document.createElement("h2");
     title.textContent = "تعديل الفرق";
     content.appendChild(title);
-
     const team1Label = document.createElement("label");
     team1Label.textContent = "التيم الاحمر";
     team1Label.style.display = "block";
     team1Label.style.marginTop = "10px";
     content.appendChild(team1Label);
-
     const team1Textarea = document.createElement("textarea");
     team1Textarea.id = "editTeam1Players";
     team1Textarea.style.width = "100%";
     team1Textarea.style.height = "100px";
     team1Textarea.value = window.team1Players.join("\n");
     content.appendChild(team1Textarea);
-
     const team2Label = document.createElement("label");
     team2Label.textContent = "التيم الازرق";
     team2Label.style.display = "block";
     team2Label.style.marginTop = "10px";
     content.appendChild(team2Label);
-
     const team2Textarea = document.createElement("textarea");
     team2Textarea.id = "editTeam2Players";
     team2Textarea.style.width = "100%";
     team2Textarea.style.height = "100px";
     team2Textarea.value = window.team2Players.join("\n");
     content.appendChild(team2Textarea);
-
     const btnContainer = document.createElement("div");
     btnContainer.style.marginTop = "20px";
     btnContainer.style.display = "flex";
     btnContainer.style.justifyContent = "space-around";
-
     const saveBtn = document.createElement("button");
     saveBtn.textContent = "حفظ";
     saveBtn.style.padding = "10px 20px";
     saveBtn.style.cursor = "pointer";
     btnContainer.appendChild(saveBtn);
-
     const cancelBtn = document.createElement("button");
     cancelBtn.textContent = "إلغاء";
     cancelBtn.style.padding = "10px 20px";
     cancelBtn.style.cursor = "pointer";
     btnContainer.appendChild(cancelBtn);
-
     content.appendChild(btnContainer);
     modal.appendChild(content);
     document.body.appendChild(modal);
-
     cancelBtn.addEventListener("click", () => {
       modal.remove();
     });
-
     saveBtn.addEventListener("click", () => {
-      let newTeam1 = team1Textarea.value
-        .split(/\r?\n/)
-        .map((name) => name.trim())
-        .filter((name) => name);
-      let newTeam2 = team2Textarea.value
-        .split(/\r?\n/)
-        .map((name) => name.trim())
-        .filter((name) => name);
-
+      let newTeam1 = team1Textarea.value.split(/\r?\n/).map(name => name.trim()).filter(name => name);
+      let newTeam2 = team2Textarea.value.split(/\r?\n/).map(name => name.trim()).filter(name => name);
       if (newTeam1.length === 0) newTeam1 = ["أحمر"];
       if (newTeam2.length === 0) newTeam2 = ["أزرق"];
-
       window.team1Players = newTeam1;
       window.team2Players = newTeam2;
-
-      window.team1Stats = window.team1Players.map((player) => ({ name: player, score: 0 }));
-      window.team2Stats = window.team2Players.map((player) => ({ name: player, score: 0 }));
-
+      window.team1Stats = window.team1Players.map(player => ({ name: player, score: 0 }));
+      window.team2Stats = window.team2Players.map(player => ({ name: player, score: 0 }));
       updatePlayerLists();
       modal.remove();
     });

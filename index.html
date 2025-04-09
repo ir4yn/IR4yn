@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="./images/icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -18,53 +19,43 @@
   <script src="js/script.js" defer></script>
 </head>
 <body>
-  <div id="hamburger" class="hamburger">☰</div>
-  <div id="sidebar" class="sidebar">
-    <button id="close-sidebar" class="close-sidebar">×</button>
-    <h2>اهلا</h2>
-    <p id="user-email"></p>
-    <button id="logout-btn">تسجيل خروج</button>
-  </div>
-  <section class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 id="hero-title">اللوبي</h1>
-      <div id="hero-buttons">
-        <button id="play-btn">العب الآن</button>
-        <button id="info-btn">شرح اللعبة</button>
+  <header class="main-header">
+    <div class="header-content">
+      <button id="logout-btn" class="logout-btn">تسجيل خروج</button>
+      <h1 class="logo">العاب راين</h1>
+      <div class="user-info" id="user-email"></div> 
+    </div>
+  </header>
+
+  <main class="games-container">
+    <h2 class="section-title"> </h2>
+    <div class="games-grid" id="games-grid"></div>
+  </main>
+
+  <footer class="main-footer">
+    <div class="footer-content">
+      <p></p>
+      <div class="social-links">
+        <a href="https://www.twitch.tv/lr4yn" target="_blank" class="social-icon twitch">
+          <i class="fa-brands fa-twitch"></i>
+        </a>
+        <span class="social-icon discord">
+          <i class="fa-brands fa-discord"></i>&nbsp; iR4yn
+        </span>
+        <a href="https://x.com/ir4yn" target="_blank" class="social-icon x">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
       </div>
     </div>
-    <div class="slider-container" id="slider">
-      <div class="slide" style="background-image: url('./images/wo.png')" data-index="0" data-title="لعبة الكلمات" data-url="./WordGame/"></div>
-      <div class="slide" style="background-image: url('./images/rh.png')" data-index="1" data-title="سباق المشاهدين" data-url="./RaceRH/"></div>
-      <div class="slide" style="background-image: url('./images/lu.png')" data-index="2" data-title="مربعات الحظ" data-url="./LuckySqares/"></div>
-    </div>
-    <div class="slider-controls">
-      <button class="slider-btn" id="prevBtn">❮</button>
-      <button class="slider-btn" id="nextBtn">❯</button>
-    </div>
-  </section>
-  <div id="modal" class="modal">
+  </footer>
+
+  <div id="game-modal" class="modal">
     <div class="modal-content">
       <button class="close-btn" id="modal-close">×</button>
-      <h2>شرح اللعبة</h2>
+      <h2 id="modal-title"></h2>
       <p id="modal-text"></p>
+      <button class="play-btn" id="modal-play">العب</button>
     </div>
   </div>
-  <div id="version-modal" class="modal">
-    <div class="modal-content">
-      <button class="close-btn" id="version-modal-close">×</button>
-      <h2>اختر النسخة</h2>
-      <div class="version-buttons">
-        <button class="version-btn" id="normal-version-btn">النسخة العادية</button>
-        <button class="version-btn" id="special-version-btn">النسخة الخاصة</button>
-      </div>
-    </div>
-  </div>
-  <script>
-    if (window.location.pathname.endsWith('index.html')) {
-      window.history.replaceState({}, '', window.location.pathname.replace('index.html', ''));
-    }
-  </script>
 </body>
 </html>

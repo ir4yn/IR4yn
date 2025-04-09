@@ -26,8 +26,12 @@
     <div id="questionDisplay" class="question-display"></div>
     <div id="answerDisplay" class="answer-display"></div>
     <div id="board">
-      <div class="team-circle blue" id="blueCircle">أزرق</div>
-      <div class="team-circle red" id="redCircle">أحمر</div>
+      <div id="blueCircle" class="team-circle blue">
+        <img src="images/azr.png" alt="صورة الفريق الأزرق" class="team-image">
+      </div>
+      <div id="redCircle" class="team-circle red">
+        <img src="images/ahmr.png" alt="صورة الفريق الأحمر" class="team-image">
+      </div>
       <div id="stagesContainer"></div>
     </div>
     <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="decisionModalLabel" aria-hidden="true">
@@ -86,7 +90,6 @@
       </div>
     </div>
   </div>
-  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

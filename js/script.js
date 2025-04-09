@@ -1,129 +1,160 @@
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    firebase.database().ref('users/' + user.uid).once('value')
-      .then((snapshot) => {
-        const userData = snapshot.val();
-        const username = userData && userData.username ? userData.username : user.email;
-        document.getElementById('user-email').textContent = username;
-      });
-  }
-});
+document.addEventListener('DOMContentLoaded', () => {
+  // بيانات الألعاب
+  const games = [
+    {
+      title: "لعبة الكلمات",
+      image: "./images/wo.png",
+      info: "وصف لعبة الكلمات هنا...",
+      url: "./WordGame/",
+      hasVersion: false,
+      hasCountdown: true,     // إضافة خاصية لعرض عد تنازلي
+      countdownMessage: "سيتم تحديث الكلمات بعد:"
+    },
+    {
+      title: "سباق المشاهدين",
+      image: "./images/rh.png",
+      info: "وصف سباق المشاهدين هنا...",
+      normalUrl: "./RaceRH1/",
+      specialUrl: "./RaceRH/",
+      hasVersion: true,
+      hasCountdown: true,
+      countdownMessage: "سيتم تحديث الأسئلة بعد:"
+    },
+    {
+      title: "مربعات الحظ",
+      image: "./images/lu.png",
+      info: "وصف مربعات الحظ هنا...",
+      url: "./LuckySqares/",
+      hasVersion: false,
+      hasCountdown: false   
+    }
+  ];
 
-const slides = document.querySelectorAll('.slide');
-let currentIndex = 0;
+  const gamesGrid = document.getElementById('games-grid');
+  
+  games.forEach(game => {
+    const gameCard = document.createElement('div');
+    gameCard.className = 'game-card';
 
-function updateSlides() {
-  slides.forEach((slide, index) => {
-    slide.classList.toggle('active', index === currentIndex);
-    slide.classList.toggle('inactive', index !== currentIndex);
-  });
-  updateHeroContent();
-}
 
-function updateHeroContent() {
-  const activeSlide = slides[currentIndex];
-  document.getElementById('hero-title').textContent = activeSlide.dataset.title;
-  const playBtn = document.getElementById('play-btn');
-  if (activeSlide.dataset.index === "1") {
-    playBtn.onclick = () => {
-      document.getElementById('version-modal').classList.add('show');
-    };
-  } else {
-    playBtn.onclick = () => {
-      window.location.href = activeSlide.dataset.url;
-    };
-  }
-  document.getElementById('info-btn').onclick = () => {
-    const gameInfo = {
-      0: "--",
-      1: "",
-      2: "--"
-    };
-    document.getElementById('modal-text').textContent = gameInfo[currentIndex];
-    document.getElementById('modal').classList.add('show');
-  };
-}
+    let countdownHtml = '';
+    if(game.hasCountdown) {
 
-document.getElementById('prevBtn').addEventListener('click', () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  updateSlides();
-});
+      const countdownId = "countdown-" + game.title.replace(/\s/g, '-');
+      countdownHtml = `<div class="countdown" id="${countdownId}">
+                         ${game.countdownMessage} <span class="timer"></span>
+                       </div>`;
+    }
+    
+    gameCard.innerHTML = `
+      <img src="${game.image}" alt="${game.title}" class="game-image">
+      <div class="game-content">
+        <h3 class="game-title">${game.title}</h3>
+        <div class="game-actions">
+          ${game.hasVersion ? 
+            '<button class="game-btn play-btn" data-game="version">العب</button>' : 
+            '<button class="game-btn play-btn" data-game="play">العب</button>'}
+          <button class="game-btn info-btn" data-game="info">شرح اللعبة</button>
+        </div>
+        ${countdownHtml}
+      </div>
+    `;
 
-document.getElementById('nextBtn').addEventListener('click', () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateSlides();
-});
+    gameCard.querySelector('.play-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if(game.hasVersion) {
+        showVersionModal(game);
+      } else {
+        window.location.href = game.url;
+      }
+    });
 
-updateSlides();
 
-setInterval(() => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateSlides();
-}, 10000);
+    gameCard.querySelector('.info-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      showGameInfo(game);
+    });
 
-slides.forEach(slide => {
-  slide.addEventListener('click', () => {
-    if (slide.dataset.index === "1") {
-      document.getElementById('version-modal').classList.add('show');
-    } else {
-      window.location.href = slide.dataset.url;
+    gamesGrid.appendChild(gameCard);
+
+  
+    if(game.hasCountdown) {
+      let updateTime = new Date();
+      updateTime.setDate(updateTime.getDate() + 14);
+      const countdownId = "countdown-" + game.title.replace(/\s/g, '-');
+      const timerElement = document.querySelector(`#${countdownId} .timer`);
+      startCountdown(updateTime, timerElement);
     }
   });
-});
 
-document.getElementById('modal-close').addEventListener('click', () => {
-  document.getElementById('modal').classList.remove('show');
-});
+  function showGameInfo(game) {
+    modalTitle.textContent = game.title;
+    modalText.textContent = game.info;
+    modalPlay.style.display = game.hasVersion ? 'none' : 'block';
+    modalPlay.onclick = () => window.location.href = game.url;
+    modal.classList.add('show');
+  }
 
-window.addEventListener('click', (e) => {
-  const modal = document.getElementById('modal');
-  if (e.target === modal) {
+
+  function showVersionModal(game) {
+    modalTitle.textContent = game.title;
+    modalText.innerHTML = `
+      <div class="version-buttons">
+        <button class="version-btn" onclick="window.location.href='${game.normalUrl}'">النسخة العادية</button>
+        <button class="version-btn" onclick="window.location.href='${game.specialUrl}'">النسخة الخاصة</button>
+      </div>
+    `;
+    modalPlay.style.display = 'none';
+    modal.classList.add('show');
+  }
+
+
+  const modal = document.getElementById('game-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalText = document.getElementById('modal-text');
+  const modalPlay = document.getElementById('modal-play');
+
+  document.getElementById('modal-close').addEventListener('click', () => {
     modal.classList.remove('show');
-  }
-});
-
-document.getElementById('normal-version-btn').addEventListener('click', () => {
-  window.location.href = './RaceRH1/';
-});
-
-document.getElementById('special-version-btn').addEventListener('click', () => {
-  window.location.href = './RaceRH/';
-});
-
-document.getElementById('version-modal-close').addEventListener('click', () => {
-  document.getElementById('version-modal').classList.remove('show');
-});
-
-window.addEventListener('click', (e) => {
-  const versionModal = document.getElementById('version-modal');
-  if (e.target === versionModal) {
-    versionModal.classList.remove('show');
-  }
-});
-
-const hamburger = document.getElementById("hamburger");
-const sidebar = document.getElementById("sidebar");
-const closeSidebar = document.getElementById("close-sidebar");
-const logoutBtn = document.getElementById("logout-btn");
-
-hamburger.addEventListener("click", () => {
-  sidebar.classList.add("show");
-});
-
-closeSidebar.addEventListener("click", () => {
-  sidebar.classList.remove("show");
-});
-
-window.addEventListener("click", (e) => {
-  if (e.target === sidebar) {
-    sidebar.classList.remove("show");
-  }
-});
-
-logoutBtn.addEventListener("click", () => {
-  firebase.auth().signOut().then(() => {
-    window.location.href = "login.html";
-  }).catch((error) => {
-    console.error("خطأ في تسجيل الخروج:", error);
   });
+
+  window.addEventListener('click', (e) => {
+    if(e.target === modal) {
+      modal.classList.remove('show');
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    firebase.auth().signOut().then(() => {
+      window.location.href = "login.html";
+    });
+  });
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      firebase.database().ref('users/' + user.uid).once('value')
+        .then((snapshot) => {
+          const userData = snapshot.val();
+          const username = userData && userData.username ? userData.username : user.email;
+          document.getElementById('user-email').textContent = username;
+        });
+    }
+  });
+  
+  function startCountdown(targetDate, element) {
+    const countdownInterval = setInterval(() => {
+      const now = new Date();
+      const diff = targetDate - now;
+      if(diff <= 0) {
+        clearInterval(countdownInterval);
+        element.innerText = "00 يوم 00 ساعة 00 دقيقة 00 ثانية";
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      element.innerText = `${days} يوم ${hours} ساعة ${minutes} دقيقة ${seconds} ثانية`;
+    }, 1000);
+  }
 });

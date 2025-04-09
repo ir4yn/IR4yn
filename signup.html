@@ -6,6 +6,7 @@
   <title>إنشاء حساب</title>
   <link rel="icon" type="image/png" href="./images/icon.png">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -14,6 +15,12 @@
   <script src="js/auth.js"></script>
 </head>
 <body>
+  <header class="main-header">
+    <div class="header-content">
+      <h1 class="logo">العاب راين</h1>
+    </div>
+  </header>
+
   <div class="auth-container">
     <h2>إنشاء حساب جديد</h2>
     <form id="signup-form">
@@ -55,8 +62,8 @@
     function handleAuthError(error) {
       const messages = {
         'auth/email-already-in-use': 'اسم المستخدم مستخدم بالفعل',
-        'auth/weak-password': 'تاكد من الباسوورد حط 6 اراقم و حروف',
-        'auth/invalid-email': 'اسم مستخدم غير صالح',
+        'auth/weak-password': 'تاكد من الباسوورد حط 6 ارقام و حروف',
+        'auth/invalid-email': 'اسم المستخدم غير صالح',
         'auth/operation-not-allowed': 'هذه العملية غير مسموحة'
       };
       showError(messages[error.code] || error.message);
@@ -68,5 +75,23 @@
       setTimeout(() => errorDiv.textContent = '', 5000);
     }
   </script>
+  <footer class="main-footer">
+    <div class="footer-content">
+      <p></p>
+      <div class="social-links">
+        <a href="https://www.twitch.tv/lr4yn" target="_blank" class="social-icon twitch">
+          <i class="fa-brands fa-twitch"></i>
+        </a>
+        <span class="social-icon discord">
+          <i class="fa-brands fa-discord"></i>&nbsp; iR4yn
+        </span>
+        
+        </a>
+        <a href="https://x.com/ir4yn" target="_blank" class="social-icon x">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

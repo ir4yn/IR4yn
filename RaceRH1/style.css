@@ -5,19 +5,18 @@ html, body {
   min-height: 100vh;
   overflow: hidden;
   direction: rtl;
-  background-image: url('./images/bl.jpg');
+  background-image: url('./images/ap.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
   font-family: 'Tajawal', sans-serif;
 }
 
-/*-------------------*/
-/* Game & Stages Containers */
 #gameContainer, #stagesContainer {
   width: 100vw;
   height: 100vh;
 }
 
-/*-------------------*/
-/* Overlay */
 #userOverlay {
   position: fixed;
   top: 0;
@@ -32,8 +31,6 @@ html, body {
   backdrop-filter: blur(3px);
 }
 
-/*-------------------*/
-/* Auth Card */
 .auth-card {
   background: linear-gradient(145deg, #EFEFEF 0%, #515251 100%);
   padding: 25px 30px;
@@ -89,15 +86,11 @@ html, body {
   transform: translateY(0);
 }
 
-/*-------------------*/
-/* Game Container */
 #gameContainer {
   padding: 20px;
-   background: rgba(95, 92, 92, 0.8);
+  background: rgba(0, 0, 0, 0.363);
 }
 
-/*-------------------*/
-/* Stages Container */
 #stagesContainer {
   display: flex;
   justify-content: center;
@@ -117,21 +110,18 @@ html, body {
     45deg,
     #0000006d 0,
     #00000076 10px,
-    #ffffff72 10px,
-    #ffffff5f 20px
+    #ffffff17 10px,
+    #ffffff11 20px
   );
   opacity: 0.7;
   z-index: 0;
 }
 
-
-/*-------------------*/
-/* Stage */
 .stage {
   width: clamp(60px, 10vw, 80px);
   height: clamp(120px, 25vh, 170px);
-  background: linear-gradient(160deg, #aaaaa9 20%, #b9c0c1 30%, #c9d8d8 100%);
-  border: 0px solid #2972b22a;
+  background: linear-gradient(160deg, #ffffffbd 20%, #ffffffc4 30%, #ffffffc1 100%);
+  border: 0px solid #2d2e302a;
   margin: 0 6px;
   display: flex;
   align-items: flex-end;
@@ -140,7 +130,7 @@ html, body {
   z-index: 1;
   border-radius: 12px;
   box-shadow: 
-    0 4px 12px rgba(41,115,178,0.3),
+    0 4px 12px rgba(119, 138, 152, 0),
     inset 0 -4px 8px rgba(242,239,231,0.2);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
@@ -166,12 +156,9 @@ html, body {
 }
 
 .active-stage {
-  box-shadow: 0 0 15px 5px rgba(255, 225, 0, 0.288);
+  box-shadow: 0 0 15px 5px rgba(238, 255, 0, 0.236);
   transition: box-shadow 0.3s ease-in-out;
 }
-
-
-
 
 .stage:hover {
   transform: translateY(-10px) scale(1.05);
@@ -185,8 +172,6 @@ html, body {
     0 12px 24px rgba(41,115,178,0.4);
 }
 
-/*-------------------*/
-/* Icon Box */
 .icon-box {
   width: clamp(30px, 5vw, 40px);
   height: clamp(30px, 5vw, 40px);
@@ -196,11 +181,9 @@ html, body {
   filter: drop-shadow(0 2px 4px rgba(41,115,178,0.2));
 }
 
-/*-------------------*/
-/* Team Circle */
 .team-circle {
-  width: clamp(40px, 7vw, 50px);
-  height: clamp(40px, 7vw, 50px);
+  width: clamp(40px, 7vw, 40px);
+  height: clamp(40px, 7vw, 40px);
   border-radius: 50%;
   position: absolute;
   z-index: 10;
@@ -209,21 +192,18 @@ html, body {
   justify-content: center;
   color: #F2EFE7;
   font-weight: bold;
-  box-shadow: 0 4px 8px rgba(41,115,178,0.2);
-  border: 2px solid rgba(242,239,231,0.2);
+
   font-size: clamp(1em, 2.5vw, 1.2em);
 }
 
-.team-circle.blue {
-  background: linear-gradient(145deg, #0066cc 0%, #004799 100%);
+.team-image {
+  max-width: 180%;
+  max-height: 180%;
+  object-fit: cover;
 }
 
-.team-circle.red {
-  background: linear-gradient(145deg, #cc0000 0%, #990000 100%);
-}
 
-/*-------------------*/
-/* Controls */
+
 #controls {
   text-align: center;
   margin-top: 20px;
@@ -287,15 +267,12 @@ html, body {
   color: #777;
 }
 
-
-/*-------------------*/
-/* Question Display */
 .question-display {
   position: fixed;
   top: 38%; 
   left: 50%;
   transform: translate(-50%, -50%);
-  background: linear-gradient(160deg, #f2efe788 20%, #d4e1e385 30%, #c9d8d892 100%);
+  background: linear-gradient(160deg, #00000088 20%, #00000085 30%, #00000092 100%);
   border: 0px solid #0d0d0d; 
   padding: 25px 40px;
   border-radius: 12px;
@@ -308,6 +285,56 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.timer-container {
+  position: absolute;
+  top: 5px; 
+  left: 5px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer-box {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 8px; 
+  padding: 1px; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 150px; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+}
+
+#timer {
+  font-size: 1.2em; 
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 3px; 
+}
+
+.timer-controls.left {
+  order: -1;
+}
+
+.timer-controls.right {
+  order: 1;
+}
+
+.timer-controls button {
+  width: 24px; 
+  height: 24px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em; 
 }
 
 .question-box {
@@ -342,13 +369,11 @@ html, body {
 .question-text {
   text-align: center;
   font-size: clamp(1.8rem, 4vw, 2.8rem);
-  color: #000000;
+  color: #ffffff;
   line-height: 1.4;
-  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0);
   margin: 15px 0;
 }
-
-
 
 .who-answered {
   text-align: center;
@@ -375,8 +400,6 @@ html, body {
   box-shadow: inset 0 0 20px rgba(74,144,226,0.2); 
 }
 
-/*-------------------*/
-/* Answer Buttons */
 .answer-buttons {
   display: flex;
   justify-content: center;
@@ -409,7 +432,6 @@ html, body {
 }
 
 .team-answer[data-team="blue"] {
-
   background: linear-gradient(145deg, #0066cc 0%, #004799 100%);
 }
 
@@ -422,7 +444,6 @@ html, body {
 }
 
 .team-answer[data-team="red"] {
- 
   background: linear-gradient(145deg, #cc0000 0%, #990000 100%);
 }
 
@@ -441,7 +462,7 @@ html, body {
   text-align: left;
   font-size: clamp(0.6em, 2vw, 0.8em);
   background-color: transparent;
-  color: #000000;
+  color: #ffffff;
   z-index: 1000;
   border: 2px solid rgba(242,239,231,0.1);
   padding: 10px 20px;
@@ -452,25 +473,23 @@ html, body {
   overflow-y: auto;
 }
 
-/*-------------------*/
-/* Lifeline Button */
 .lifeline-button {
   width: clamp(85px, 6vw, 110px);
   height: clamp(85px, 6vw, 110px);
   border-radius: 20%;
-  color: #F2EFE7;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: clamp(13px, 3vw, 16px);
-  border: 2px solid rgba(242,239,231,0.3) !important;
+  border: 0px solid rgba(0, 0, 0, 0.3) !important;
   box-shadow: 
-    0 4px 12px rgba(41,115,178,0.3),
-    inset 0 -4px 8px rgba(41,115,178,0.2);
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  text-shadow: 1px 1px 3px rgba(41,115,178,0.5);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .lifeline-button::before {
@@ -492,7 +511,7 @@ html, body {
 .lifeline-button:hover {
   transform: translateY(-5px) scale(1.1);
   box-shadow: 
-    0 6px 20px rgba(41,115,178,0.4),
+    0 6px 20px rgba(66, 69, 72, 0.4),
     inset 0 -4px 8px rgba(242,239,231,0.1);
 }
 
@@ -502,17 +521,17 @@ html, body {
 
 .blue-lifeline {
   background: linear-gradient(145deg, 
-    #3a6fcc 0%,
+    #2b00ff 0%,
     #004799 30%,
-    #002966 100%
+    #0800ff 100%
   );
 }
 
 .red-lifeline {
   background: linear-gradient(145deg, 
-    #e83a5c 0%,
+    #ff0033 0%,
     #990000 30%,
-    #660000 100%
+    #ff0000 100%
   );
 }
 
@@ -534,8 +553,6 @@ html, body {
   text-shadow: 0 2px 4px rgba(41,115,178,0.3);
 }
 
-/*-------------------*/
-/* Stage Category & Icon */
 .stage-category {
   position: absolute;
   white-space: nowrap; 
@@ -564,8 +581,6 @@ html, body {
   object-fit: contain;
 }
 
-/*-------------------*/
-/* Modals */
 .modal {
   backdrop-filter: blur(8px) saturate(180%);
   background: rgba(0, 0, 0, 0.65) !important;
@@ -641,7 +656,6 @@ html, body {
 }
 
 .setting-input {
-  /* استبدال الخلفية السوداء */
   background: rgba(72,166,167,0.3) !important;
   border: 1px solid rgba(242,239,231,0.2) !important;
   color: #F2EFE7 !important;
@@ -663,7 +677,6 @@ html, body {
 }
 
 .form-switch .form-check-input:checked {
-  /* يبقى اللون الأحمر */
   background-color: #e94560;
   border-color: #e94560;
 }
@@ -676,7 +689,6 @@ html, body {
 }
 
 .modal-footer .btn-primary {
-  /* يبقى اللون الأحمر */
   background: linear-gradient(145deg, 
     rgba(233, 69, 96, 0.8) 0%, 
     rgba(176, 48, 72, 0.8) 100%
@@ -685,13 +697,10 @@ html, body {
 }
 
 .modal-footer .btn-secondary {
-  /* تدرج معدل باستخدام لوحتنا */
   background: linear-gradient(145deg, #F2EFE7 0%, #9ACBD0 100%);
   border-color: rgba(242,239,231,0.3);
 }
 
-/*-------------------*/
-/* Decision Modal */
 .decision-modal-content {
   border-radius: 12px;
   text-align: center;
@@ -700,15 +709,15 @@ html, body {
 }
 
 .decision-modal-content.blue {
-  /* يبقى اللون الأزرق */
   background: linear-gradient(145deg, #0066cc, #00479949);
   color: #fff;
 }
+
 .decision-modal-content.red {
-  /* يبقى اللون الأحمر */
   background: linear-gradient(145deg, #cc0000, #990000);
   color: #fff;
 }
+
 
 .decision-btn-advance,
 .decision-btn-push {
@@ -724,4 +733,41 @@ html, body {
 .decision-btn-push:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(41,115,178,0.3);
+}
+
+
+.modal-body .btn {
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.modal-body .btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.modal-body .btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.modal-body .btn-danger,
+.modal-body .btn-warning,
+.modal-body .btn-primary,
+.modal-body .btn-info {
+  background-color: #27272766;
+  color: white;
+}
+
+.active-category {
+  color: #FFD700;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
 }
