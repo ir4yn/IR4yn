@@ -4,16 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "لعبة الكلمات",
       image: "./images/wo.png",
-      info: "وصف لعبة الكلمات هنا...",
+      info: "...",
       url: "./WordGame/",
       hasVersion: false,
-      hasCountdown: true,     // إضافة خاصية لعرض عد تنازلي
+      hasCountdown: true,    
       countdownMessage: "سيتم تحديث الكلمات بعد:"
     },
     {
       title: "سباق المشاهدين",
       image: "./images/rh.png",
-      info: "وصف سباق المشاهدين هنا...",
+      info: "...",
       normalUrl: "./RaceRH1/",
       specialUrl: "./RaceRH/",
       hasVersion: true,
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "مربعات الحظ",
       image: "./images/lu.png",
-      info: "وصف مربعات الحظ هنا...",
+      info: "...",
       url: "./LuckySqares/",
       hasVersion: false,
       hasCountdown: false   
