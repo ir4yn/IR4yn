@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #090909;
+    font-family: 'Tajawal', sans-serif;
+}
+
+.container {
+    position: relative;
+    padding: 20px;
+}
+
+.hex-grid {
+    padding: 20px;
+    background: transparent;
+    border-radius: 8px;
+    width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+}
+
+.row:nth-child(even) {
+    margin-left: 42px;
+}
+
+.row:nth-child(odd) {
+    margin-right: 42px;
+}
+
+
+
+.row:not(:first-child) {
+    margin-top: -20px;
+}
+
+.hexagon {
+    width: 80px;
+    height: 92px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: relative;
+    background-color: #efeaea;
+    border: 2px solid #000000;
+}
+
+.hexagon.fixed {
+    cursor: default;
+    background-color: #bc0000 !important; 
+}
+
+.hexagon.fixed-side {
+    background-color: #0028b9 !important; 
+}
+
+.hexagon.center {
+    background-color: #000000 !important;
+    color: white;
+    font-size: 32px;
+}
+
+.controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.icon-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #eae3e3;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
