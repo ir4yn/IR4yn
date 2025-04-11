@@ -386,12 +386,19 @@ $(document).on('click', '.question-img-container', function() {
 // تأكد من استعراض السؤال قبل الاستماع للدردشة
 function initTwitchChatListener() {
   const client = new tmi.Client({
+    options: { debug: true },
     connection: {
       secure: true,
       reconnect: true
     },
-    channels: ['lr4yn', 'oos8', 'realhero1'] // ضع أسماء القنوات المطلوبة هنا
+    identity: {
+      username: 'r4yngames',        // ضع هنا اسم مستخدم البوت
+      password: 'oauth:hkyc31aiurcny7pwksuitmlm4exyi0' // ضع هنا OAuth Token الخاص بالبوت
+    },
+    // يمكن وضع أكثر من قناة هنا
+    channels: ['lr4yn', 'oos8']
   });
+
   
 
   client.connect().catch(console.error);
