@@ -45,6 +45,8 @@ function resetGame() {
   $('#blueAdvance, #redAdvance').prop('disabled', false);
   $('#resetGame').hide();
   $('#questionDisplay').empty();
+  $('#answerDisplay').empty();
+  $('#chatWinner').empty();
   answeredQuestionsForRain = {};
 }
 
@@ -193,9 +195,11 @@ function handleAnswer(team, option) {
   updateUI();
   $('#questionDisplay').empty();
   $('#answerDisplay').empty();
+  $('#chatWinner').empty();
   checkWin(team);
 }
 
+// معالجة حدث الإجابة من الأزرار اليدوية
 $('#blueAdvance').click(function() {
   $('#decisionModal').data('answeringTeam', 'blue');
   new bootstrap.Modal(document.getElementById('decisionModal')).show();
@@ -216,6 +220,7 @@ $('#choosePush').click(function() {
   handleAnswer(team, "push");
 });
 
+// عرض السؤال وتفعيل مستمع تويتش لإلتقاط الإجابة من الدردشة
 $('#showQuestion').click(() => {
   if (activeStage) {
     let stageQuestions = gameState.questions[activeStage];
@@ -239,6 +244,7 @@ $('#showQuestion').click(() => {
             ${questionData.image ? `<div class="question-img-container"><img src="${questionData.image}" class="img-fluid"></div>` : '' }
           </div>`
         );
+        // إظهار زر الإجابة في حال أردت السماح بخيار يدوي إضافي
         $('#showAnswerButton').prop('disabled', false).show();
       } else {
         alert("لا يوجد سؤال في هذه المرحلة.");
@@ -251,6 +257,7 @@ $('#showQuestion').click(() => {
   }
 });
 
+// خيار الإجابة اليدوية (يُترك فقط كاحتياطي)
 $('#showAnswerButton').click(function() {
   if (!window.currentQuestionData) {
     alert("لا يوجد سؤال معروض.");
@@ -278,10 +285,12 @@ $('#showAnswerButton').click(function() {
   updateQuestionCounts();
 });
 
+// إعادة تعيين اللعبة
 $('#resetGame').click(() => {
   resetGame();
 });
 
+// تغيير عدد المساعدات
 $('#setLifelineCount').click(function() {
   let newCount = parseInt($('#lifelineInput').val());
   if (isNaN(newCount) || newCount < 1) {
@@ -369,3 +378,51 @@ $(document).on('click', '.question-img-container', function() {
   $('#modalImage').attr('src', imgSrc);
   new bootstrap.Modal(document.getElementById('imageModal')).show();
 });
+
+/* -------------------------------------------
+   تكامل تويتش: التوصيل واستقبال رسائل الدردشة
+-------------------------------------------- */
+
+// تأكد من استعراض السؤال قبل الاستماع للدردشة
+function initTwitchChatListener() {
+  const client = new tmi.Client({
+    connection: {
+      secure: true,
+      reconnect: true
+    },
+    channels: ['lr4yn', 'oos8', 'realhero1'] // ضع أسماء القنوات المطلوبة هنا
+  });
+  
+
+  client.connect().catch(console.error);
+
+  client.on('message', (channel, tags, message, self) => {
+    if (self) return;
+    // إذا لم يتم عرض سؤال حالياً، لا نفعل شيء
+    if (!window.currentQuestionData) return;
+
+    const correctAnswer = window.currentQuestionData.answer;
+    if (message.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+      // عرض الإجابة تلقائيًا مع اسم المجيب
+      $('#answerDisplay').html(
+        `<div class="answer-content">
+           <p><strong>الاجابة:</strong> ${window.currentQuestionData.answer}</p>
+           <p><strong></strong> ${tags['display-name']}</p>
+         </div>`
+      );
+      // عرض اسم الفائز في الركن الأيسر السفلي
+      $('#chatWinner').html(`<p>: ${tags['display-name']}</p>`);
+      // حذف السؤال من قاعدة بيانات Firebase
+      if (currentUser !== "راين") {
+        database.ref('questions/' + currentUser + '/' + activeStage + '/' + window.currentQuestionId).remove();
+      }
+      // تنظيف المتغيرات الخاصة بالسؤال
+      window.currentQuestionId = null;
+      window.currentQuestionData = null;
+      updateQuestionCounts();
+    }
+  });
+}
+
+// بدء مستمع تويتش عند تحميل اللعبة
+initTwitchChatListener();
