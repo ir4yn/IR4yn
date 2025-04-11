@@ -396,7 +396,7 @@ function initTwitchChatListener() {
       password: 'oauth:hkyc31aiurcny7pwksuitmlm4exyi0' // ضع هنا OAuth Token الخاص بالبوت
     },
     // يمكن وضع أكثر من قناة هنا
-    channels: ['lr4yn', 'oos8']
+    channels: ['realhero1', 'lr4yn']
   });
 
   
